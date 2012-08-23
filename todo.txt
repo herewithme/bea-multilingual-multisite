@@ -1,0 +1,33 @@
+Todo :
+
+API
+	Register translation sets
+
+Admin
+	Dashboard widget in root blog displaying all posts which still have to be translated
+	global media library for all sites/blogs
+	Creating a draft (untraslated) :
+		For all translations
+		For selected translation
+		Copy medias
+	Delete blog
+	Clone menu to language
+
+Admin Network
+	Create website translation sets
+	Clone website on another language
+
+Widgets
+	Show translation available
+
+Client
+	Init translation sets with API
+	Shortcodes
+	Filter
+	Menu item ?
+	browser language detection and automatically forwarding to the correct language
+		For homepage
+		For allpage
+
+	Wide taxo 
+
