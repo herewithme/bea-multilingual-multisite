@@ -1,5 +1,5 @@
 <?php
-class Bea_Translation_View_Home implements Bea_Translation_View {
+class Bea_MM_Translation_View_Home implements Bea_MM_Translation_View {
 	private $obj = null;
 
 	function __construct( $args = array() ) {
@@ -16,6 +16,7 @@ class Bea_Translation_View_Home implements Bea_Translation_View {
 	}
 
 	public function get_id() {
+		return 0;
 	}
 
 	public function get_permalink() {
@@ -28,6 +29,7 @@ class Bea_Translation_View_Home implements Bea_Translation_View {
 	}
 
 	public function is_available() {
+		return true;
 	}
 	
 	public function __get( $key = '' ) {

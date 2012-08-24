@@ -1,5 +1,8 @@
 <?php
-class Bea_Multilingual_Multisite_Admin {
+/**
+ * This class to TODO? on each site administration
+ */
+class Bea_MM_Admin {
 	public function __construct() {
 	}
 

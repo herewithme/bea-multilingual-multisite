@@ -1,5 +1,5 @@
 <?php
-class Bea_Translation_View_PostType implements Bea_Translation_View {
+class Bea_MM_Translation_View_PostType implements Bea_MM_Translation_View {
 	private $obj = null;
 
 	function __construct( $args = array() ) {

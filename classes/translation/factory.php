@@ -1,9 +1,9 @@
 <?php
-class Bea_Translation_Collections {
+class Bea_MM_Translation_Factory {
 	/**
-	 * @var array Collection of Bea_Translation_View
+	 * @var array Collection of Bea_MM_Translation_View
 	 */
-	public $objects = array();
+	private $objects = array();
 
 	private $view = '';
 	private $view_args = '';
@@ -57,39 +57,12 @@ class Bea_Translation_Collections {
 		$this -> view_args['blog_id'] = get_current_blog_id();
 	}
 
-	/**
-	 * Instanciation correct class depending type of view
-	 */
-	private function _getObject() {
-		if ($this -> view == 'home') {
-			return new Bea_Translation_View_Home($this -> view_args);
-		} elseif ($this -> view == 'day') {
-			return new Bea_Translation_View_Day($this -> view_args);
-		} elseif ($this -> view == 'month') {
-			return new Bea_Translation_View_Month($this -> view_args);
-		} elseif ($this -> view == 'year') {
-			return new Bea_Translation_View_Year($this -> view_args);
-		} elseif ($this -> view == 'author') {
-			return new Bea_Translation_View_Author($this -> view_args);
-		} elseif ($this -> view == 'search') {
-			return new Bea_Translation_View_Search($this -> view_args);
-		} elseif ($this -> view == 'post_type_archive') {
-			return new Bea_Translation_View_PostTypeArchive($this -> view_args);
-		} elseif ($this -> view == 'post_type') {
-			return new Bea_Translation_View_PostType($this -> view_args);
-		} elseif ($this -> view == 'taxonomy') {
-			return new Bea_Translation_View_Taxonomy($this -> view_args);
-		} else {
-			return false;
-		}
-	}
-
 	public function getSites() {
 		$objects = array();
 		
 		$results = $wpdb -> get_results();
 		foreach ($results as $result) {
-			$objects[] = Bea_Translation_Site($result -> blog_id);
+			$objects[] = Bea_MM_Translation_Site($result -> blog_id);
 		}
 
 		return $objects;
@@ -97,7 +70,7 @@ class Bea_Translation_Collections {
 
 	/******************************* Public functions ****************************************/
 	public function getCurrentLanguage() {
-		$site = Bea_Translation_Site($blog_id);
+		$site = Bea_MM_Translation_Site($blog_id);
 		return $site;
 	}
 
@@ -112,6 +85,34 @@ class Bea_Translation_Collections {
 		}
 
 		return $this -> objects;
+	}
+	
+
+	/**
+	 * Instanciation correct class depending type of view
+	 */
+	private function _getObject() {
+		if ($this -> view == 'home') {
+			return new Bea_MM_Translation_View_Home($this -> view_args);
+		} elseif ($this -> view == 'day') {
+			return new Bea_MM_Translation_View_Day($this -> view_args);
+		} elseif ($this -> view == 'month') {
+			return new Bea_MM_Translation_View_Month($this -> view_args);
+		} elseif ($this -> view == 'year') {
+			return new Bea_MM_Translation_View_Year($this -> view_args);
+		} elseif ($this -> view == 'author') {
+			return new Bea_MM_Translation_View_Author($this -> view_args);
+		} elseif ($this -> view == 'search') {
+			return new Bea_MM_Translation_View_Search($this -> view_args);
+		} elseif ($this -> view == 'post_type_archive') {
+			return new Bea_MM_Translation_View_PostTypeArchive($this -> view_args);
+		} elseif ($this -> view == 'post_type') {
+			return new Bea_MM_Translation_View_PostType($this -> view_args);
+		} elseif ($this -> view == 'taxonomy') {
+			return new Bea_MM_Translation_View_Taxonomy($this -> view_args);
+		} else {
+			return false;
+		}
 	}
 
 	public function getTranslation($language = '') {

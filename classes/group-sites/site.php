@@ -1,9 +1,17 @@
 <?php
-class Bea_Translation_Site {
+class Bea_MM_GroupSites_Site {
 	private $obj = null;
 
 	public function __construct($site_id = 0) {
-		
+		$defaults = array(
+			'name' => null,
+			'label' => null,
+			'sites' => array(
+				array('blog_id' => 0, 'language_code' => 'fr_FR', 'language_label' => 'French' )
+			)
+		);
+		$args = wp_parse_args($args, $defaults);
+	
 	}
 	
 	public function __get( $key = '' ) {

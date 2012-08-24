@@ -6,6 +6,9 @@ Plugin URI: https://github.com/herewithme/bea-multilingual-multisite
 Description: A simple but powerful plugin that will help you to manage the relations of posts, pages, custom post types, categories, tags and custom taxonomies in your multilingual multisite-installation.
 Author: Amaury Balmer
 Author URI: http://www.beapi.fr
+Domain Path: languages
+Network: true
+Text Domain: bea-mm
 
 ----
 
@@ -33,6 +36,10 @@ define ( 'BEA_MM_FOLDER',  'bea-multilingual-multisite' );
 define ( 'BEA_MM_URL', plugins_url('', __FILE__) );
 define ( 'BEA_MM_DIR', dirname(__FILE__) );
 
+// Setup wide table on WPDB
+global $wpdb;
+$wpdb->bea_mm_translations = $wpdb->base_prefix . 'bea_mm_translations';
+
 // Function for easy load files
 function _bea_mm_load_files( $dir, $files ) {
 	foreach ( $files as $file )
@@ -43,10 +50,11 @@ function _bea_mm_load_files( $dir, $files ) {
 _bea_mm_load_files(  BEA_MM_DIR . '/functions/', array('api', 'theme') );
 
 // Plugin client classes
-_bea_mm_load_files(  BEA_MM_DIR . '/classes/', array('base', 'client', 'widget') );
+_bea_mm_load_files(  BEA_MM_DIR . '/classes/', array('plugin', 'client', 'widget') );
 
 // Plugin client interface/class/implementations
-_bea_mm_load_files(  BEA_MM_DIR . '/classes/translation/', array('interface', 'collections', 'site') );
+_bea_mm_load_files(  BEA_MM_DIR . '/classes/group-sites/', array('factory', 'site') );
+_bea_mm_load_files(  BEA_MM_DIR . '/classes/translation/', array('factory', 'interface') );
 _bea_mm_load_files(  BEA_MM_DIR . '/classes/translation/impl-', array('author', 'day', 'home', 'month', 'post_type_archive', 'post_type', 'search', 'taxonomy', 'year') );
 
 // Plugin admin classes
@@ -55,30 +63,30 @@ if ( is_admin() ) {
 }
 
 // Plugin activate/desactive hooks
-register_activation_hook  ( __FILE__, array('Bea_Multilingual_Multisite_Base', 'activate') );
-register_deactivation_hook( __FILE__, array('Bea_Multilingual_Multisite_Base', 'deactivate') );
+register_activation_hook  ( __FILE__, array('Bea_MM_Plugin', 'activate') );
+register_deactivation_hook( __FILE__, array('Bea_MM_Plugin', 'deactivate') );
 
 add_action( 'plugins_loaded', 'init_bea_multilingual_multisite' );
 function init_bea_multilingual_multisite() {
-	global $bea_multilingual_multisite;
+	global $bea_mm;
 	
 	// Load translations
 	load_plugin_textdomain ( 'bea-mm', false, basename(rtrim(BEA_MM_DIR, '/')) . '/languages' );
 	
 	// Client
-	$bea_multilingual_multisite['client-base']  = new Bea_Multilingual_Multisite_Client();
+	$bea_mm['client-base']  = new Bea_MM_Client();
 	
 	// Admin
 	if ( is_admin() ) {
 		// Class admin
-		$bea_multilingual_multisite['admin-base'] 		 = new Bea_Multilingual_Multisite_Admin();
-		$bea_multilingual_multisite['admin-network']     = new Bea_Multilingual_Multisite_Admin_Network();
+		$bea_mm['admin-base'] 		 = new Bea_MM_Admin();
+		$bea_mm['admin-network']     = new Bea_MM_Admin_Network();
 
-		$bea_multilingual_multisite['admin-post-type']   = new Bea_Multilingual_Multisite_Admin_PostType();
-		$bea_multilingual_multisite['admin-taxonomy']    = new Bea_Multilingual_Multisite_Admin_Taxonomy();
+		$bea_mm['admin-post-type']   = new Bea_MM_Admin_PostType();
+		$bea_mm['admin-taxonomy']    = new Bea_MM_Admin_Taxonomy();
 	}
 	
 	// Widget
-	add_action( 'widgets_init', create_function('', 'return register_widget("Bea_Multilingual_Multisite_Widget");') );
+	add_action( 'widgets_init', create_function('', 'return register_widget("Bea_MM_Widget");') );
 }
 ?>

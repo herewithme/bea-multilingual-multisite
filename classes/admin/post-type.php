@@ -1,5 +1,8 @@
 <?php
-class Bea_Multilingual_Multisite_Admin_PostType {
+/**
+ * This class to follow post type events (add/edit/delete) and populate relations table
+ */
+class Bea_MM_Admin_PostType {
 	public function __construct() {
 	}
 

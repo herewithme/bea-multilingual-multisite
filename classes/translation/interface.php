@@ -1,5 +1,5 @@
 <?php
-Interface Bea_Translation_View {
+Interface Bea_MM_Translation_View {
 	public function __construct($args);
 	public function get_site_id();
 	public function get_type();
