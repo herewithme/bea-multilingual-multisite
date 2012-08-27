@@ -1,0 +1,98 @@
+<?php
+/**
+ * Class for make groups for connections between blogs with custom wide tables connections
+ */
+class Bea_MM_Connection_Factory {
+	/**
+	 * @var array Collection of Bea_MM_Connection_Object
+	 */
+	private $objects = array();
+
+	private $group_id = 0;
+
+	/**
+	 * Constructor, do nothing
+	 */
+	public function __construct() {
+	}
+
+	/**
+	 * Load objects from a group id
+	 */
+	public function load_by_group_id($group_id = 0) {
+		global $wpdb;
+
+		$this -> group_id = $group_id;
+		$objects = $wpdb -> get_results($wpdb -> prepare("SELECT blog_id, object_id, object_type FROM {$wpdb->bea_mm_connections} WHERE group_id = %d", $group_id), ARRAY_A);
+		foreach ($objects as $object) {
+			$this -> append($object['object_type'], $object);
+		}
+	}
+
+	/**
+	 * Load objects manually
+	 */
+	public function load($object_type = '', $objects = array()) {
+		foreach ($objects as $object) {
+			$this -> append($object_type, $object);
+		}
+	}
+
+	/**
+	 * Add elements into private var objects array
+	 */
+	public function append($object_type = '', $object = array()) {
+		if (isset($object['blog_id']) && isset($object['object_id'])) {
+			$object = new Bea_MM_Connection_Object($object_type, $object['blog_id'], $object['object_id'], true);
+			$this -> objects[$object -> get_id()] = $object;
+		}
+	}
+
+	/**
+	 * Group objects
+	 */
+	public function group($group_id = 0) {
+		$group_id = (int)$group_id;
+		if ($group_id == 0) {
+			$group_id = $this -> get_new_group_id();
+		}
+
+		foreach ($this -> objects as $object) {
+			$object -> set_group_id($group_id);
+		}
+	}
+
+	/**
+	 * Ungroup all objects, set 0 as group id
+	 */
+	public function ungroup() {
+		foreach ($this -> objects as $object) {
+			$object -> set_group_id(0);
+		}
+	}
+
+	/**
+	 * Ungroup one object, set 0 as group id
+	 */
+	public function ungroup_object($object_id = 0) {
+		$object_id = (int)$object_id;
+		if (isset($this -> objects[$object_id])) {
+			$this -> objects[$object_id] -> set_group_id(0);
+		}
+	}
+
+	/**
+	 * Get with MySQL the max group id used, increment to one
+	 */
+	private function get_new_group_id() {
+		global $wpdb;
+
+		$group_id = (int)$wpdb -> get_var("SELECT MAX(group_id) + 1 FROM {$wpdb->bea_mm_connections}");
+		if ($group_id == 0) {// Failback if table is empty
+			$group_id = 1;
+		}
+
+		return $group_id;
+	}
+
+}

@@ -4,7 +4,7 @@
  */
 class Bea_MM_GroupSites_Factory {
 	/**
-	 * @var array Collection of Bea_GroupSites_Site
+	 * @var array Collection of Bea_MM_GroupSites_Site
 	 */
 	private $objects = array();
 

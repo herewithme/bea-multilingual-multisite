@@ -16,7 +16,7 @@ class Bea_MM_Plugin {
 		// Add one library admin function for next function
 		require_once (ABSPATH . 'wp-admin/includes/upgrade.php');
 
-		maybe_create_table($wpdb -> bea_mm_translations, "CREATE TABLE $wpdb->bea_mm_translations (
+		maybe_create_table($wpdb -> bea_mm_connections, "CREATE TABLE $wpdb->bea_mm_connections (
 			`id` bigint(10) NOT NULL AUTO_INCREMENT,
 			`object_type` varchar(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 			`blog_id` int(10) NOT NULL,
@@ -31,5 +31,4 @@ class Bea_MM_Plugin {
 
 	public static function deactivate() {
 	}
-
 }
