@@ -8,6 +8,9 @@ class Bea_MM_Connection_Factory {
 	 */
 	private $objects = array();
 
+	/**
+	 * @var integer current group_id of factory
+	 */
 	private $group_id = 0;
 
 	/**
@@ -60,6 +63,8 @@ class Bea_MM_Connection_Factory {
 		foreach ($this -> objects as $object) {
 			$object -> set_group_id($group_id);
 		}
+
+		$this -> group_id = $group_id;
 	}
 
 	/**

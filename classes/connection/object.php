@@ -60,7 +60,7 @@ class Bea_MM_Connection_Object {
 	 * Get connection id
 	 */
 	public function get_id() {
-		return (int)$this -> __get('id');
+		return (int) $this -> obj -> id;
 	}
 
 	/**
@@ -112,7 +112,7 @@ class Bea_MM_Connection_Object {
 	 * Return connection group id
 	 */
 	public function get_group_id() {
-		return $this -> __get('group_id');
+		return $this -> obj -> group_id;
 	}
 
 	/**
