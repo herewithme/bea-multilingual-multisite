@@ -1,6 +1,7 @@
 <?php
 /**
- * This class to TODO? on each site administration
+/**
+ * Class for make groups sites factory, allow to get 
  */
 class Bea_MM_GroupSites_Factory {
 	/**
@@ -9,14 +10,15 @@ class Bea_MM_GroupSites_Factory {
 	private $objects = array();
 
 	function __construct() {
+		$defaults = array('name' => null, 'label' => null, 'sites' => array( array('blog_id' => 0, 'language_code' => '', 'public_label' => '', 'admin_label' => '')));
+		$args = wp_parse_args($args, $defaults);
+	}
+	
+	function get_current() {
 		
 	}
 	
-	function getCurrent() {
-		
-	}
-	
-	function getRegistered() {
+	function get_registered() {
 		
 	}
 	
