@@ -1,6 +1,6 @@
 <?php
 /**
- * Class for make groups for connections between blogs with custom wide tables connections
+ * Class for make groups for connections between blogs with custom wide table connections
  */
 class Bea_MM_Connection_Factory {
 	/**

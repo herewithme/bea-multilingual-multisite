@@ -1,6 +1,6 @@
 <?php
 /**
- * Class for create/get/delete connection between blogs with custom wide tables connections
+ * Class for create/get/delete connection between blogs with custom wide table connections
  */
 class Bea_MM_Connection_Object {
 	/**
