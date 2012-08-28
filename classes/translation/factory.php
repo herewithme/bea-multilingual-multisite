@@ -10,6 +10,8 @@ class Bea_MM_Translation_Factory {
 
 	/**
 	 * Constructor
+	 * @param [type] $view [description]
+	 * @param [type] $args [description]
 	 */
 	public function __construct($view = null, $args = null) {
 		if ($view === null && $args === null) {
@@ -20,6 +22,7 @@ class Bea_MM_Translation_Factory {
 	/******************************* Private functions ****************************************/
 	/**
 	 * Get info from WP_Query if constructor if empty
+	 * @return [type]
 	 */
 	private function _getDataFromQuery() {
 		if (is_home() && is_front_page()) {
@@ -57,6 +60,10 @@ class Bea_MM_Translation_Factory {
 		$this -> view_args['blog_id'] = get_current_blog_id();
 	}
 
+	/**
+	 * [getSites description]
+	 * @return [type]
+	 */
 	public function getSites() {
 		$objects = array();
 		
@@ -69,11 +76,19 @@ class Bea_MM_Translation_Factory {
 	}
 
 	/******************************* Public functions ****************************************/
+	/**
+	 * [getCurrentLanguage description]
+	 * @return [type]
+	 */
 	public function getCurrentLanguage() {
 		$site = Bea_MM_Translation_Site($blog_id);
 		return $site;
 	}
 
+	/**
+	 * [getAvailableTranslations description]
+	 * @return [type]
+	 */
 	public function getAvailableTranslations() {
 		foreach ($this->getSites() as $result) {
 			$instance = new $this->_getObject();
@@ -87,9 +102,9 @@ class Bea_MM_Translation_Factory {
 		return $this -> objects;
 	}
 	
-
 	/**
-	 * Instanciation correct class depending type of view
+	 * Instanciate correct class depending type of view
+	 * @return [type]
 	 */
 	private function _getObject() {
 		if ($this -> view == 'home') {
@@ -115,6 +130,11 @@ class Bea_MM_Translation_Factory {
 		}
 	}
 
+	/**
+	 * [getTranslation description]
+	 * @param  string $language [description]
+	 * @return [type]
+	 */
 	public function getTranslation($language = '') {
 		return $this -> objects[$language];
 	}
@@ -141,6 +161,11 @@ class Bea_MM_Translation_Factory {
 	public function get_language_code() {
 	}
 
+	/**
+	 * Key or null
+	 * @param  string $key [description]
+	 * @return [type]
+	 */
 	public function __get( $key = '' ) {
 		return( isset( $this->obj->$key ) ? $this->obj->$key : null );
 	}
