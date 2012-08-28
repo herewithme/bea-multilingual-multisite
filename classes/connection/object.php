@@ -41,11 +41,11 @@ class Bea_MM_Connection_Object {
 			$this -> obj -> object_type = $object_type;
 			$this -> obj -> blog_id = $blog_id;
 			$this -> obj -> object_id = $object_id;
-		}
 
-		// Insert line into table
-		if ($force_add == true) {
-			$this -> add();
+			// Insert line into table
+			if ($force_add == true) {
+				$this -> add();
+			}
 		}
 	}
 
@@ -69,7 +69,7 @@ class Bea_MM_Connection_Object {
 	public function add() {
 		global $wpdb;
 
-		if ($this -> obj !== null) {
+		if ($this -> obj !== null && !$this->exist() ) {
 			$result = $wpdb -> insert($wpdb -> bea_mm_connections, array('object_type' => $this -> obj -> object_type, 'blog_id' => $this -> obj -> blog_id, 'object_id' => $this -> obj -> object_id, 'group_id' => 0), array('%s', '%d', '%d'));
 			if ($result == false) {
 				$this -> obj -> id = (int)$wpdb -> insert_id;
