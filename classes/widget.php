@@ -7,7 +7,7 @@ class Bea_MM_Widget extends WP_Widget {
 	 */
 	public function __construct() {
 		parent::__construct('bea-multilingual-multisite', __('Language switcher', 'bea-mm'), array('classname' => 'bea-multilingual-multisite language-switcher', 'description' => __('Display avalaible translation for current view.', 'bea-mm')));
-	}// end constructor
+	}
 
 	/**
 	 * Outputs the content of the widget.
@@ -34,7 +34,7 @@ class Bea_MM_Widget extends WP_Widget {
 
 		echo $after_widget;
 
-	}// end widget
+	}
 
 	/**
 	 * Processes the widget's options to be saved.
@@ -50,7 +50,7 @@ class Bea_MM_Widget extends WP_Widget {
 
 		return $instance;
 
-	}// end widget
+	}
 
 	/**
 	 * Generates the administration form for the widget.
@@ -63,6 +63,5 @@ class Bea_MM_Widget extends WP_Widget {
 		
 		// Display the admin form
 		include (BEA_MM_DIR . '/widgets/admin.php');
-	} // end form
-
+	}
 }

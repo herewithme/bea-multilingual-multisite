@@ -10,9 +10,11 @@ class Bea_MM_Translation_View_Home implements Bea_MM_Translation_View {
 	}
 
 	public function get_site_id() {
+		return $this->obj->blog_id;
 	}
 
 	public function get_type() {
+		return 'home';
 	}
 
 	public function get_id() {
@@ -20,12 +22,15 @@ class Bea_MM_Translation_View_Home implements Bea_MM_Translation_View {
 	}
 
 	public function get_permalink() {
+		return get_home_url($this->obj->blog_id, '/');
 	}
 
 	public function get_title() {
+		return get_bloginfo('blogname');
 	}
 
 	public function get_classes() {
+		return 'home';
 	}
 
 	public function is_available() {
