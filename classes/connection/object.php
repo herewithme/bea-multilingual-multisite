@@ -21,8 +21,8 @@ class Bea_MM_Connection_Object {
 	 * @param boolean $force_add   [description]
 	 */
 	public function __construct( $object_type = '', $blog_id = 0, $object_id = 0, $force_add = false ) {
-		if ( !empty( $object_type ) ) {
-			$this->init( $object_type, $blog_id, $object_id );
+		if ( !empty( $object_type ) && (int)$blog_id > 0 && (int)$object_id > 0 ) {
+			$this->init( $object_type, $blog_id, $object_id, $force_add );
 		}
 	}
 
@@ -43,7 +43,7 @@ class Bea_MM_Connection_Object {
 		$object_id = (int)$object_id;
 
 		// Setup object from DB
-		$this->obj = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->bea_mm_connections} WHERE object_type = %s AND blog_id = %d AND $object_id = %d" ), $object_type, $blog_id, $object_id );
+		$this->obj = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->bea_mm_connections} WHERE object_type = %s AND blog_id = %d AND $object_id = %d", $object_type, $blog_id, $object_id ) );
 		if ( $this->obj == false ) {
 			// Make incomplete object for next usage when not exist on DB
 			$this->obj = new stdClass;
@@ -71,7 +71,7 @@ class Bea_MM_Connection_Object {
 	 * @return [type]
 	 */
 	public function get_id( ) {
-		return (int)$this->obj->id;
+		return (int) $this->obj->id;
 	}
 
 	/**
@@ -101,7 +101,9 @@ class Bea_MM_Connection_Object {
 		global $wpdb;
 
 		if ( $this->exist( ) ) {
-			return $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->bea_mm_connections} WHERE id = %d", $this->obj->id ) );
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->bea_mm_connections} WHERE id = %d", $this->obj->id ) );
+			unset( $this->obj->id, $this->obj->group_id );
+			return true;
 		}
 
 		return false;
@@ -122,8 +124,12 @@ class Bea_MM_Connection_Object {
 
 		// Set group if line exist
 		if ( $this->exist( ) ) {
-			return $wpdb->update( $wpdb->bea_mm_connections, array( 'group_id' => $group_id ), array( '%d' ) );
+			$wpdb->update( $wpdb->bea_mm_connections, array( 'group_id' => $group_id ), array( '%d' ) );
+			$this->obj->group_id = $group_id;
+			return true;
 		}
+
+		return false;
 	}
 
 	/**
@@ -131,7 +137,7 @@ class Bea_MM_Connection_Object {
 	 * @return [type]
 	 */
 	public function get_group_id( ) {
-		return $this->obj->group_id;
+		return (int) $this->obj->group_id;
 	}
 
 	/**

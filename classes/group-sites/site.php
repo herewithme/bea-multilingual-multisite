@@ -42,7 +42,7 @@ class Bea_MM_GroupSites_Site {
 	 * @return boolean
 	 */
 	public function exist( ) {
-		return is_null( $this->obj );
+		return !is_null( $this->obj );
 	}
 
 	/**
@@ -50,6 +50,8 @@ class Bea_MM_GroupSites_Site {
 	 * @return integer
 	 */
 	public function get_id( ) {
+		if ( !$this->exist() ) return null;
+		
 		return $this->obj->blog_id;
 	}
 
@@ -58,6 +60,8 @@ class Bea_MM_GroupSites_Site {
 	 * @return string
 	 */
 	public function get_language_code( ) {
+		if ( !$this->exist() ) return null;
+		
 		return $this->obj->language_code;
 	}
 
@@ -67,6 +71,8 @@ class Bea_MM_GroupSites_Site {
 	 * @return string
 	 */
 	public function get_language_label( $admin = false ) {
+		if ( !$this->exist() ) return null;
+		
 		if ( $admin == true )
 			return $this->obj->admin_label;
 
@@ -80,6 +86,8 @@ class Bea_MM_GroupSites_Site {
 	 * @return string
 	 */
 	public function get_permalink( $path = '', $scheme = null ) {
+		if ( !$this->exist() ) return null;
+		
 		return get_home_url( $this->get_id( ), $path, $scheme );
 	}
 
