@@ -15,6 +15,10 @@ class Bea_MM_Connection_Object {
 
 	/**
 	 * Constructor with conditionnal shortcuts for init method
+	 * @param string  $object_type [description]
+	 * @param integer $blog_id     [description]
+	 * @param integer $object_id   [description]
+	 * @param boolean $force_add   [description]
 	 */
 	public function __construct($object_type = '', $blog_id = 0, $object_id = 0, $force_add = false) {
 		if (!empty($object_type)) {
@@ -24,6 +28,11 @@ class Bea_MM_Connection_Object {
 
 	/**
 	 * Init object, try to get data from DB, optionnaly force insertion on DB
+	 * @param  string  $object_type [description]
+	 * @param  integer $blog_id     [description]
+	 * @param  integer $object_id   [description]
+	 * @param  boolean $force_add   [description]
+	 * @return [type]
 	 */
 	public function init($object_type = '', $blog_id = 0, $object_id = 0, $force_add = false) {
 		global $wpdb;
@@ -51,6 +60,7 @@ class Bea_MM_Connection_Object {
 
 	/**
 	 * Test if connection exist on table or not
+	 * @return boolean
 	 */
 	public function exist() {
 		return isset($this -> obj -> id);
@@ -58,6 +68,7 @@ class Bea_MM_Connection_Object {
 
 	/**
 	 * Get connection id
+	 * @return [type]
 	 */
 	public function get_id() {
 		return (int) $this -> obj -> id;
@@ -65,32 +76,40 @@ class Bea_MM_Connection_Object {
 
 	/**
 	 * Add connection on DB
+	 * @return [type]
 	 */
 	public function add() {
 		global $wpdb;
 
 		if ($this -> obj !== null && !$this->exist() ) {
 			$result = $wpdb -> insert($wpdb -> bea_mm_connections, array('object_type' => $this -> obj -> object_type, 'blog_id' => $this -> obj -> blog_id, 'object_id' => $this -> obj -> object_id, 'group_id' => 0), array('%s', '%d', '%d'));
-			if ($result == false) {
+			if ($result != false) {
 				$this -> obj -> id = (int)$wpdb -> insert_id;
 				$this -> obj -> group_id = 0;
+				return true;
 			}
 		}
+
+		return false;
 	}
 
 	/**
 	 * Delete connection from DB
+	 * @return [type]
 	 */
 	public function delete() {
 		global $wpdb;
 
 		if ($this -> exist()) {
-			$wpdb -> query($wpdb -> prepare("DELETE FROM {$wpdb->bea_mm_connections} WHERE id = %d", $this -> obj -> id));
+			return $wpdb -> query($wpdb -> prepare("DELETE FROM {$wpdb->bea_mm_connections} WHERE id = %d", $this -> obj -> id));
 		}
+
+		return false;
 	}
 
 	/**
 	 * Set group id field for row
+	 * @param integer $group_id [description]
 	 */
 	public function set_group_id($group_id = 0) {
 		global $wpdb;
@@ -110,6 +129,7 @@ class Bea_MM_Connection_Object {
 
 	/**
 	 * Return connection group id
+	 * @return [type]
 	 */
 	public function get_group_id() {
 		return $this -> obj -> group_id;
@@ -117,6 +137,8 @@ class Bea_MM_Connection_Object {
 
 	/**
 	 * Key or null
+	 * @param  string $key [description]
+	 * @return [type]
 	 */
 	public function __get($key = '') {
 		return (isset($this -> obj -> $key) ? $this -> obj -> $key : null);

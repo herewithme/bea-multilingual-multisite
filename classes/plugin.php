@@ -1,5 +1,9 @@
 <?php
 class Bea_MM_Plugin {
+	/**
+	 * Active plugin
+	 * @return [type]
+	 */
 	public static function activate() {
 		global $wpdb;
 
@@ -29,6 +33,10 @@ class Bea_MM_Plugin {
 		return true;
 	}
 
+	/**
+	 * Deactive plugin
+	 * @return [type]
+	 */
 	public static function deactivate() {
 	}
 }

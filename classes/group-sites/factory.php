@@ -1,7 +1,6 @@
 <?php
 /**
-/**
- * Class for make groups sites factory, allow to get 
+ *  Class for make groups sites factory, allow to get 
  */
 class Bea_MM_GroupSites_Factory {
 	/**
