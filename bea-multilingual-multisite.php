@@ -40,6 +40,10 @@ define('BEA_MM_DIR', dirname(__FILE__));
 global $wpdb;
 $wpdb -> bea_mm_connections = $wpdb -> base_prefix . 'bea_mm_connections';
 
+// Setup group sites global
+global $groupsites_factory;
+$groupsites_factory = array();
+
 // Function for easy load files
 function _bea_mm_load_files($dir, $files) {
 	foreach ($files as $file)

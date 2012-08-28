@@ -135,11 +135,12 @@ class Bea_MM_Translation_Factory {
 	 * @param  string $language [description]
 	 * @return [type]
 	 */
-	public function getTranslation($language = '') {
+	public function getTranslation($language = '' ) {
 		return $this -> objects[$language];
-	}
+		}
 
-	/******************************* WP_Query API Client Inspiration ****************************************/
+		/******************************* WP_Query API Client Inspiration ****************************************/
+	
 	public function have_translations() {
 	}
 
