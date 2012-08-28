@@ -62,7 +62,7 @@ class Bea_MM_Connection_Object {
 	 * Test if connection exist on table or not
 	 * @return boolean
 	 */
-	public function exist( ) {
+	public function exists( ) {
 		return isset( $this->obj->id );
 	}
 
@@ -81,7 +81,7 @@ class Bea_MM_Connection_Object {
 	public function add( ) {
 		global $wpdb;
 
-		if ( $this->obj !== null && !$this->exist( ) ) {
+		if ( $this->obj !== null && !$this->exists( ) ) {
 			$result = $wpdb->insert( $wpdb->bea_mm_connections, array( 'object_type' => $this->obj->object_type, 'blog_id' => $this->obj->blog_id, 'object_id' => $this->obj->object_id, 'group_id' => 0 ), array( '%s', '%d', '%d' ) );
 			if ( $result != false ) {
 				$this->obj->id = (int)$wpdb->insert_id;
@@ -100,7 +100,7 @@ class Bea_MM_Connection_Object {
 	public function delete( ) {
 		global $wpdb;
 
-		if ( $this->exist( ) ) {
+		if ( $this->exists( ) ) {
 			$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->bea_mm_connections} WHERE id = %d", $this->obj->id ) );
 			unset( $this->obj->id, $this->obj->group_id );
 			return true;
@@ -118,12 +118,12 @@ class Bea_MM_Connection_Object {
 
 		$group_id = (int)$group_id;
 		// Add line before, set group
-		if ( !$this->exist( ) ) {
+		if ( !$this->exists( ) ) {
 			$this->add( );
 		}
 
 		// Set group if line exist
-		if ( $this->exist( ) ) {
+		if ( $this->exists( ) ) {
 			$wpdb->update( $wpdb->bea_mm_connections, array( 'group_id' => $group_id ), array( '%d' ) );
 			$this->obj->group_id = $group_id;
 			return true;

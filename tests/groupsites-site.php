@@ -3,8 +3,8 @@ require( dirname(__FILE__) . '/config.php' );
 
 $instance = new Bea_MM_GroupSites_Site( 1, 'en_US', 'English 1', 'English 2' );
 
-echo "\n\n\n\n Bea_MM_GroupSites_Site->exist \n";
-$results = $instance->exist();
+echo "\n\n\n\n Bea_MM_GroupSites_Site->exists \n";
+$results = $instance->exists();
 var_dump($results);
 
 echo "\n\n\n\n Bea_MM_GroupSites_Site->get_id \n";
@@ -30,8 +30,8 @@ var_dump($results);
 
 $instance = new Bea_MM_GroupSites_Site( 100, 'en_US', 'English 1', 'English 2' );
 
-echo "\n\n\n\n Bea_MM_GroupSites_Site->exist \n";
-$results = $instance->exist();
+echo "\n\n\n\n Bea_MM_GroupSites_Site->exists \n";
+$results = $instance->exists();
 var_dump($results);
 
 

@@ -103,7 +103,7 @@ class Bea_MM_GroupSites_Factory {
 
 		// Sample: array( 'blog_id' => 3, 'language_code' => 'de_DE', 'public_label' => 'German',   'admin_label' => 'German' ),
 		$site = new Bea_MM_GroupSites_Site( $blog['blog_id'], $blog['language_code'], $blog['public_label'], $blog['admin_label'] );
-		if ( $site->exist( ) ) {
+		if ( $site->exists( ) ) {
 			$groupsites_factory[$name]['blogs'][$site->get_id( )] = $site;
 			return true;
 		}
