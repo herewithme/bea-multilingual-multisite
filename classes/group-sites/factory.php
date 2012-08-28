@@ -1,17 +1,18 @@
 <?php
 /**
  *  Class for make groups sites factory, allow to get 
+ *  This class used a global for save group, as WP for CPT or Taxonomies
  */
 class Bea_MM_GroupSites_Factory {
 	/**
-	 * @var array Collection of Bea_MM_GroupSites_Site
+	 * Constructor, do nothing
 	 */
-	private $objects = array();
-
 	function __construct() {
-		$defaults = array('name' => null, 'label' => null, 'sites' => array( array('blog_id' => 0, 'language_code' => '', 'public_label' => '', 'admin_label' => '')));
+		$defaults = array('name' => null, 'label' => null, 'sites' => array());
 		$args = wp_parse_args($args, $defaults);
 	}
+
+
 	
 	function get_current() {
 		
@@ -25,7 +26,7 @@ class Bea_MM_GroupSites_Factory {
 		
 	}
 	
-	function register() {
+	function register( $name = '', $label = '', $blogs = array() ) {
 		
 	}
 	

@@ -2,7 +2,7 @@
 /**
  * Class that represente site
  */
-class Bea_MM_GroupSites_Site {7
+class Bea_MM_GroupSites_Site {
 	/**
 	 * Site object
 	 * @var stdClass
@@ -39,7 +39,7 @@ class Bea_MM_GroupSites_Site {7
 	}
 
 	/**
-	 * Get language code, as fr_FR or de_DE
+	 * Get language code, ex: fr_FR or de_DE
 	 * @return string
 	 */
 	public function get_language_code() {
