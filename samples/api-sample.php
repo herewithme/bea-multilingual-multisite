@@ -1,7 +1,6 @@
 <?php
 // Plugin usage or functions.php
-
-Bea_GroupSites_Factory::register( 
+Bea_MM_GroupSites_Factory::register( 
 	'site-canada',
 	'Canada',
 	array(
@@ -10,7 +9,7 @@ Bea_GroupSites_Factory::register(
 	)
 );
 
-bea_mm_register_site_group(
+bea_mm_groupsites_register(
 	'site-switzerland',
 	'Switzerland',
 	array(

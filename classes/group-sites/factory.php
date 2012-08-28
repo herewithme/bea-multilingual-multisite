@@ -14,11 +14,11 @@ class Bea_MM_GroupSites_Factory {
 	 * Get group of current blog
 	 * @return array|false
 	 */
-	public function get_current_group( ) {
+	public static function get_current_group( ) {
 		global $wpdb;
 		return self::get_group_by_blog_id( $wpdb->blogid );
 	}
-	
+
 	/**
 	 * Get group for a blog id specified
 	 * @param  integer $blog_id [description]
@@ -26,18 +26,18 @@ class Bea_MM_GroupSites_Factory {
 	 */
 	public static function get_group_by_blog_id( $blog_id = 0 ) {
 		global $groupsites_factory;
-		
-		foreach( $groupsites_factory as $name => $blogs ) {
-			foreach( $blogs as $id => $blog ) {
+
+		foreach ( $groupsites_factory as $name => $blogs ) {
+			foreach ( $blogs as $id => $blog ) {
 				if ( $blog_id == $id ) {
 					return $groupsites_factory[$name];
 				}
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * [get_group description]
 	 * @param  string $name [description]
@@ -45,11 +45,11 @@ class Bea_MM_GroupSites_Factory {
 	 */
 	public static function get_group( $name = '' ) {
 		global $groupsites_factory;
-		
-		if ( empty( $name ) || !isset($groupsites_factory[$name]) ) {
+
+		if ( empty( $name ) || !isset( $groupsites_factory[$name] ) ) {
 			return false;
 		}
-		
+
 		return $groupsites_factory[$name];
 	}
 
@@ -57,7 +57,7 @@ class Bea_MM_GroupSites_Factory {
 	 * Get all group sites registered for this plugin
 	 * @return array
 	 */
-	public static function get_all_groups() {
+	public static function get_all_groups( ) {
 		global $groupsites_factory;
 		return $groupsites_factory;
 	}
@@ -85,10 +85,10 @@ class Bea_MM_GroupSites_Factory {
 		foreach ( $blogs as $blog ) {
 			self::append( $name, $blog );
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Allow to add a blog object into factory
 	 * @param  string $name [description]
@@ -97,18 +97,18 @@ class Bea_MM_GroupSites_Factory {
 	 */
 	public static function append( $name = '', $blog = array() ) {
 		global $groupsites_factory;
-		
-		if ( empty( $name ) || empty( $blogs ) || !is_array( $blogs ) || !isset($groupsites_factory[$name]) ) {
+
+		if ( empty( $name ) || empty( $blogs ) || !is_array( $blogs ) || !isset( $groupsites_factory[$name] ) ) {
 			return false;
 		}
-		
+
 		// Sample: array( 'blog_id' => 3, 'language_code' => 'de_DE', 'public_label' => 'German',   'admin_label' => 'German' ),
 		$site = new Bea_MM_GroupSites_Site( $blog['blog_id'], $blog['language_code'], $blog['public_label'], $blog['admin_label'] );
 		if ( $site->exist( ) ) {
-			$groupsites_factory[$name]['blogs'][$site->get_id()] = $site;
+			$groupsites_factory[$name]['blogs'][$site->get_id( )] = $site;
 			return true;
 		}
-		
+
 		return false;
 	}
 

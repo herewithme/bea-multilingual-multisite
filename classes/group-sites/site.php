@@ -36,15 +36,15 @@ class Bea_MM_GroupSites_Site {
 
 		return true;
 	}
-	
+
 	/**
 	 * Test if blog exist and valid
 	 * @return boolean
 	 */
 	public function exist( ) {
-		return is_null($this->obj);
+		return is_null( $this->obj );
 	}
-	
+
 	/**
 	 * Get blog ID
 	 * @return integer
