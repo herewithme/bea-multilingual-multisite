@@ -55,8 +55,20 @@ class Bea_MM_Connection_Factory {
 	public function append( $object_type = '', $object = array() ) {
 		if ( isset( $object['blog_id'] ) && isset( $object['object_id'] ) ) {
 			$object = new Bea_MM_Connection_Object( $object_type, $object['blog_id'], $object['object_id'], true );
-			$this->objects[$object->get_id( )] = $object;
+			$this->objects[$object->get_blog_id( )] = $object;
 		}
+	}
+	
+	function get_all() {
+		return $this->objects;
+	}
+	
+	function get_by_blog_id( $blog_id = 0 ) {
+		if ( isset($this->objects[$blog_id]) ) {
+			return $this->objects[$blog_id];
+		}
+		
+		return false;
 	}
 
 	/**
@@ -69,7 +81,7 @@ class Bea_MM_Connection_Factory {
 		if ( $group_id == 0 ) {
 			$group_id = $this->get_new_group_id( );
 		}
-
+		
 		foreach ( $this -> objects as $object ) {
 			$object->set_group_id( $group_id );
 		}
@@ -88,14 +100,14 @@ class Bea_MM_Connection_Factory {
 	}
 
 	/**
-	 * Ungroup one object, set 0 as group id
-	 * @param  integer $object_id [description]
+	 * Ungroup one blog object, set 0 as group id
+	 * @param  integer $blog_id [description]
 	 * @return [type]
 	 */
-	public function ungroup_object( $object_id = 0 ) {
-		$object_id = (int)$object_id;
-		if ( isset( $this->objects[$object_id] ) ) {
-			$this->objects[$object_id]->set_group_id( 0 );
+	public function ungroup_blog( $blog_id = 0 ) {
+		$blog_id = (int)$blog_id;
+		if ( isset( $this->objects[$blog_id] ) ) {
+			$this->objects[$blog_id]->set_group_id( 0 );
 		}
 	}
 
@@ -103,7 +115,7 @@ class Bea_MM_Connection_Factory {
 	 * Get with MySQL the max group id used, increment to one
 	 * @return [type]
 	 */
-	private function get_new_group_id( ) {
+	public function get_new_group_id( ) {
 		global $wpdb;
 
 		$group_id = (int)$wpdb->get_var( "SELECT MAX(group_id) + 1 FROM {$wpdb->bea_mm_connections}" );
