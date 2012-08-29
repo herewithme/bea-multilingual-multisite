@@ -70,7 +70,7 @@ class Bea_MM_Translation_Factory {
 
 		// setup blog id
 		$this->view_blog_id = ($blog_id == 0) ? get_current_blog_id( ) : $blog_id;
-
+		
 		// Init group sites
 		$this->groupsites = Bea_MM_GroupSites_Factory::get_group_by_blog_id( $this->view_blog_id );
 
@@ -123,7 +123,7 @@ class Bea_MM_Translation_Factory {
 			$term = get_queried_object( );
 
 			$this->view = 'taxonomy';
-			$this->view_args = array( 'term_id' => get_queried_object_id( ), 'taxonomy' => $term->taxonomy );
+			$this->view_args = array( 'term_id' => get_queried_object_id( ), 'taxonomy' => $term->taxonomy, 'term_taxonomy_id' => $term->term_taxonomy_id );
 		}
 	}
 
@@ -164,7 +164,7 @@ class Bea_MM_Translation_Factory {
 	private function _getObject( $blog_id = 0 ) {
 		$this->view_args['source_blog_id'] = $this->view_blog_id;
 		$this->view_args['blog_id'] = ($blog_id == 0) ? $this->view_blog_id : $blog_id;
-
+		
 		if ( $this->view == 'home' ) {
 			return new Bea_MM_Translation_View_Home( $this->view_args );
 		} elseif ( $this->view == 'day' ) {
@@ -259,7 +259,7 @@ class Bea_MM_Translation_Factory {
 
 	public function translation_exists( ) {
 		if ( $this->translation == NULL )
-			return NULL;
+			return false;
 
 		return $this->translation->is_available( );
 	}
