@@ -71,7 +71,7 @@ class Bea_MM_Connection_Object {
 	 * @return [type]
 	 */
 	public function get_id( ) {
-		return (int) $this->obj->id;
+		return (int)$this->obj->id;
 	}
 
 	/**
@@ -121,10 +121,10 @@ class Bea_MM_Connection_Object {
 		if ( !$this->exists( ) ) {
 			$this->add( );
 		}
-
+		
 		// Set group if line exist
 		if ( $this->exists( ) ) {
-			$wpdb->update( $wpdb->bea_mm_connections, array( 'group_id' => $group_id ), array( '%d' ) );
+			$wpdb->update( $wpdb->bea_mm_connections, array( 'group_id' => $group_id ), array('id' => $this->obj->id), array( '%d' ), array( '%d' ) );
 			$this->obj->group_id = $group_id;
 			return true;
 		}
@@ -137,16 +137,14 @@ class Bea_MM_Connection_Object {
 	 * @return [type]
 	 */
 	public function get_group_id( ) {
-		return (int) $this->obj->group_id;
+		return (int)$this->obj->group_id;
 	}
 
 	/**
-	 * Key or null
-	 * @param  string $key [description]
+	 * Return connection blog id
 	 * @return [type]
 	 */
-	public function __get( $key = '' ) {
-		return (isset( $this->obj->$key ) ? $this->obj->$key : null);
+	public function get_blog_id( ) {
+		return (int)$this->obj->blog_id;
 	}
-
 }
