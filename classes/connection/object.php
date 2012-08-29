@@ -131,6 +131,14 @@ class Bea_MM_Connection_Object {
 
 		return false;
 	}
+	
+	/**
+	 * Return connection object id
+	 * @return [type]
+	 */
+	public function get_object_id( ) {
+		return (int)$this->obj->object_id;
+	}
 
 	/**
 	 * Return connection group id
