@@ -7,7 +7,7 @@ class Bea_MM_Translation_View_Search implements Bea_MM_Translation_View {
 		$this->obj = (object) wp_parse_args( $args, $defaults );
 	}
 
-	public function get_site_id( ) {
+	public function get_blog_id( ) {
 		return $this->obj->blog_id;
 	}
 
@@ -33,10 +33,6 @@ class Bea_MM_Translation_View_Search implements Bea_MM_Translation_View {
 
 	public function is_available( ) {
 		return true;
-	}
-
-	public function __get( $key = '' ) {
-		return (isset( $this->obj->$key ) ? $this->obj->$key : null);
 	}
 
 }
