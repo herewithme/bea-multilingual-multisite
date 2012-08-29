@@ -141,6 +141,6 @@ class Bea_MM_Connection_Factory {
 	 */
 	public static function remove_connections_by_blog( $blog_id = 0 ) {
 		global $wpdb;
-		return $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->bea_mm_connections} WHERE blog_id = %d",  $blog_id));
+		return $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->bea_mm_connections} WHERE blog_id = %d", (int) $blog_id));
 	}
 }
