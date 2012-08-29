@@ -61,3 +61,5 @@ $results = $instance->exists();
 var_dump($results);
 
 $wpdb->query("TRUNCATE TABLE {$wpdb->bea_mm_connections}");
+
+die('Fine');
