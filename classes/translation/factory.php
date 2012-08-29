@@ -1,16 +1,58 @@
 <?php
 class Bea_MM_Translation_Factory {
 	/**
-	 * @var array Collection of Bea_MM_Translation_View
+	 *
+	 * @access public
+	 * @var object Bea_MM_GroupSites_Factory
 	 */
-	private $objects = array( );
+	public $groupsites = NULL;
+
+	/**
+	 * List of translations.
+	 *
+	 * @access public
+	 * @var array
+	 */
+	public $translations;
+
+	/**
+	 * The amount of translations for the current query.
+	 *
+	 * @access public
+	 * @var int
+	 */
+	public $translation_count = 0;
+
+	/**
+	 * Index of the current item in the loop.
+	 *
+	 * @access public
+	 * @var int
+	 */
+	public $current_translation = -1;
+
+	/**
+	 * Whether the loop has started and the caller is in the loop.
+	 *
+	 * @access public
+	 * @var bool
+	 */
+	public $in_the_loop = false;
+
+	/**
+	 * The current translation.
+	 *
+	 * @access public
+	 * @var object
+	 */
+	public $translation = NULL;
 
 	/**
 	 * Current context
 	 */
-	private $view = '';
-	private $view_blog_id = 0;
-	private $view_args = '';
+	public $view = '';
+	public $view_blog_id = 0;
+	public $view_args = '';
 
 	/**
 	 * Constructor
@@ -18,8 +60,8 @@ class Bea_MM_Translation_Factory {
 	 * @param array $args [description]
 	 * @param integer $blog_id [description]
 	 */
-	public function __construct( $view = null, $args = null, $blog_id = 0 ) {
-		if ( $view === null && $args === null ) {
+	public function __construct( $view = NULL, $args = NULL, $blog_id = 0 ) {
+		if ( $view === NULL && $args === NULL ) {
 			$this->_setupDataFromQuery( );
 		} else {
 			$this->view = $view;
@@ -28,6 +70,24 @@ class Bea_MM_Translation_Factory {
 
 		// setup blog id
 		$this->view_blog_id = ($blog_id == 0) ? get_current_blog_id( ) : $blog_id;
+
+		// Init group sites
+		$this->groupsites = Bea_MM_GroupSites_Factory::get_group_by_blog_id( $this->view_blog_id );
+
+		// Init
+		$this->init( );
+	}
+
+	/**
+	 * [getAvailableTranslations description]
+	 * @return [type]
+	 */
+	public function init( ) {
+		foreach ( $this->_getBlogs() as $site ) {
+			$this->translations[] = $this->_getObject( $site->get_id( ) );
+		}
+
+		$this->translation_count = count( $this->translations );
 	}
 
 	/**
@@ -71,44 +131,30 @@ class Bea_MM_Translation_Factory {
 	 * [getSites description]
 	 * @return [type]
 	 */
-	public function getSites( ) {
-		$objects = array( );
+	private function _getBlogs( ) {
+		if ( $this->groupsites == false )
+			return array( );
 
-		$group_sites = Bea_MM_GroupSites_Factory::get_group_by_blog_id( $this->view_blog_id );
-		foreach ( $group_sites['blogs'] as $blog ) {
-			$objects[] = new Bea_MM_Translation_Site( $blog['blog_id'] );
-		}
-
-		return $objects;
+		return $this->groupsites['blogs'];
 	}
 
 	/**
 	 * [getCurrentLanguage description]
 	 * @return [type]
 	 */
-	public function getCurrentLanguage( ) {
-		$group_sites = Bea_MM_GroupSites_Factory::get_group_by_blog_id( $this->view_blog_id );
-		if ( $group_sites == false || !isset( $group_sites[$this->view_blog_id] ) )
+	private function _getBlog( $blog_id = 0 ) {
+		if ( $this->groupsites == false || $blog_id == 0 || !isset( $this->groupsites['blogs'][$blog_id] ) )
 			return false;
 
-		return $group_sites[$this->view_blog_id]->get_language_code( );
+		return $this->groupsites['blogs'][$blog_id];
 	}
 
 	/**
-	 * [getAvailableTranslations description]
+	 * [getCurrentLanguage description]
 	 * @return [type]
 	 */
-	public function getAvailableTranslations( ) {
-		foreach ( $this->getSites() as $site ) {
-			$instance = new $this->_getObject( $site->get_blog_id( ) );
-			if ( $instance == false ) {
-				continue;
-			}
-
-			$this->objects[$site->getLanguageCode( )] = $instance;
-		}
-
-		return $this->objects;
+	private function _getCurrentBlog( ) {
+		return $this->_getBlog( $this->view_blog_id );
 	}
 
 	/**
@@ -116,6 +162,7 @@ class Bea_MM_Translation_Factory {
 	 * @return [type]
 	 */
 	private function _getObject( $blog_id = 0 ) {
+		$this->view_args['source_blog_id'] = $this->view_blog_id;
 		$this->view_args['blog_id'] = ($blog_id == 0) ? $this->view_blog_id : $blog_id;
 
 		if ( $this->view == 'home' ) {
@@ -132,7 +179,7 @@ class Bea_MM_Translation_Factory {
 			return new Bea_MM_Translation_View_Search( $this->view_args );
 		} elseif ( $this->view == 'post_type_archive' ) {
 			return new Bea_MM_Translation_View_PostTypeArchive( $this->view_args );
-		} elseif ( $this->view == 'post_type' ) {
+		} elseif ( $this->view == 'post_type' || $this->view == 'post' || $this->view == 'page' ) {
 			return new Bea_MM_Translation_View_PostType( $this->view_args );
 		} elseif ( $this->view == 'taxonomy' ) {
 			return new Bea_MM_Translation_View_Taxonomy( $this->view_args );
@@ -152,34 +199,142 @@ class Bea_MM_Translation_Factory {
 
 	/******************************* WP_Query API Client Inspiration ****************************************/
 
-	public function have_translations( ) {
-	}
-
+	/**
+	 * Sets up the current translation.
+	 *
+	 * Retrieves the next translation, sets up the translation, sets the 'in the loop'
+	 * property to true.
+	 *
+	 * @access public
+	 */
 	public function the_translation( ) {
-	}
-
-	public function get_id( ) {
-	}
-
-	public function get_title( ) {
-	}
-
-	public function get_permalink( ) {
-	}
-
-	public function get_language_label( ) {
-	}
-
-	public function get_language_code( ) {
+		$this->in_the_loop = true;
+		$this->translation = $this->next_translation( );
 	}
 
 	/**
-	 * Key or null
-	 * @param  string $key [description]
-	 * @return [type]
+	 * Whether there are more posts available in the loop.
+	 *
+	 * @access publicd
+	 *
+	 * @return bool True if posts are available, false if end of loop.
 	 */
-	public function __get( $key = '' ) {
-		return (isset( $this->obj->$key ) ? $this->obj->$key : null);
+	public function have_translations( ) {
+		if ( $this->current_translation + 1 < $this->translation_count ) {
+			return true;
+		} elseif ( $this->current_translation + 1 == $this->translation_count && $this->translation_count > 0 ) {
+			$this->rewind_translations( );
+		}
+
+		$this->in_the_loop = false;
+		return false;
+	}
+
+	/**
+	 * Set up the next translation and iterate current translation index.
+	 *
+	 * @access public
+	 *
+	 * @return WP_Post Next post.
+	 */
+	public function next_translation( ) {
+		$this->current_translation++;
+
+		$this->translation = $this->translations[$this->current_translation];
+		return $this->translation;
+	}
+
+	/**
+	 * Rewind the translations and reset translation index.
+	 *
+	 * @since 1.5.0
+	 * @access public
+	 */
+	public function rewind_translations( ) {
+		$this->current_translation = -1;
+		if ( $this->translation_count > 0 ) {
+			$this->translation = $this->translations[0];
+		}
+	}
+
+	public function translation_exists( ) {
+		if ( $this->translation == NULL )
+			return NULL;
+
+		return $this->translation->is_available( );
+	}
+
+	public function get_translation_type( ) {
+		if ( $this->translation == NULL )
+			return NULL;
+
+		return $this->translation->get_type( );
+	}
+
+	public function get_translation_id( ) {
+		if ( $this->translation == NULL )
+			return NULL;
+
+		return $this->translation->get_id( );
+	}
+
+	public function get_translation_classes( ) {
+		if ( $this->translation == NULL )
+			return NULL;
+
+		return $this->translation->get_classes( );
+	}
+
+	public function get_translation_title( ) {
+		if ( $this->translation == NULL )
+			return NULL;
+
+		return $this->translation->get_title( );
+	}
+
+	public function get_translation_permalink( ) {
+		if ( $this->translation == NULL )
+			return NULL;
+
+		return $this->translation->get_permalink( );
+	}
+
+	public function get_translation_blog_id( ) {
+		if ( $this->translation == NULL )
+			return NULL;
+
+		return $this->translation->get_blog_id( );
+	}
+
+	public function get_blog_id( ) {
+		if ( $this->translation == NULL )
+			return NULL;
+
+		return $this->translation->get_blog_id( );
+	}
+
+	public function get_language_label( ) {
+		$blog = $this->_getBlog( $this->get_translation_blog_id( ) );
+		if ( $blog == false )
+			return NULL;
+
+		return $blog->get_language_label( );
+	}
+
+	public function get_language_code( ) {
+		$blog = $this->_getBlog( $this->get_translation_blog_id( ) );
+		if ( $blog == false )
+			return NULL;
+
+		return $blog->get_language_code( );
+	}
+
+	public function get_home_permalink( ) {
+		$blog = $this->_getBlog( $this->get_translation_blog_id( ) );
+		if ( $blog == false )
+			return NULL;
+
+		return $blog->get_permalink( );
 	}
 
 }
