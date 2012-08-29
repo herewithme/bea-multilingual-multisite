@@ -95,13 +95,4 @@ class Bea_MM_GroupSites_Site {
 		return get_home_url( $this->get_id( ), $path, $scheme );
 	}
 
-	/**
-	 * Key or null
-	 * @param  string $key [description]
-	 * @return mixed
-	 */
-	public function __get( $key = '' ) {
-		return (isset( $this->obj->$key ) ? $this->obj->$key : null);
-	}
-
 }
