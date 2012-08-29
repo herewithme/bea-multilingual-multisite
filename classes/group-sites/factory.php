@@ -77,6 +77,7 @@ class Bea_MM_GroupSites_Factory {
 
 		// Add group into factory
 		$groupsites_factory[$name] = array( );
+		$groupsites_factory[$name]['name'] 	= $name;
 		$groupsites_factory[$name]['label'] = $label;
 		$groupsites_factory[$name]['blogs'] = array( );
 
