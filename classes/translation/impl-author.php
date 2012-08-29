@@ -12,7 +12,7 @@ class Bea_MM_Translation_View_Author implements Bea_MM_Translation_View {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return [type]      [description]
 	 */
 	public function get_site_id( ) {
@@ -20,7 +20,7 @@ class Bea_MM_Translation_View_Author implements Bea_MM_Translation_View {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return [type]      [description]
 	 */
 	public function get_type( ) {
@@ -28,7 +28,7 @@ class Bea_MM_Translation_View_Author implements Bea_MM_Translation_View {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return [type]      [description]
 	 */
 	public function get_id( ) {
@@ -36,23 +36,23 @@ class Bea_MM_Translation_View_Author implements Bea_MM_Translation_View {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return [type]      [description]
 	 */
 	public function get_permalink( ) {
-		return get_author_posts_url( $this->get_id() );
+		return get_author_posts_url( $this->get_id( ) );
 	}
 
 	/**
-	 * 
+	 *
 	 * @return [type]      [description]
 	 */
 	public function get_title( ) {
-		return get_the_author_meta( 'display_name', $this->get_id() );
+		return get_the_author_meta( 'display_name', $this->get_id( ) );
 	}
 
 	/**
-	 * 
+	 *
 	 * @return [type]      [description]
 	 */
 	public function get_classes( ) {
@@ -65,7 +65,7 @@ class Bea_MM_Translation_View_Author implements Bea_MM_Translation_View {
 	 */
 	public function is_available( ) {
 		global $wpdb;
-		return $wpdb->get_var( $wpdb->prepare("SELECT count(ID) FROM {$wpdb->posts} WHERE post_author = %d AND post_status = 'publish'", (int)$this->obj->author_id) );
+		return $wpdb->get_var( $wpdb->prepare( "SELECT count(ID) FROM {$wpdb->posts} WHERE post_author = %d AND post_status = 'publish'", (int)$this->obj->author_id ) );
 	}
 
 	/**
@@ -76,4 +76,5 @@ class Bea_MM_Translation_View_Author implements Bea_MM_Translation_View {
 	public function __get( $key = '' ) {
 		return (isset( $this->obj->$key ) ? $this->obj->$key : null);
 	}
+
 }

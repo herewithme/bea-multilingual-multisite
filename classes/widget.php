@@ -5,8 +5,8 @@ class Bea_MM_Widget extends WP_Widget {
 	 * the widget, loads localization files, and includes necessary scripts and
 	 * styles.
 	 */
-	public function __construct() {
-		parent::__construct('bea-multilingual-multisite', __('Language switcher', 'bea-mm'), array('classname' => 'bea-multilingual-multisite language-switcher', 'description' => __('Display avalaible translation for current view.', 'bea-mm')));
+	public function __construct( ) {
+		parent::__construct( 'bea-multilingual-multisite', __( 'Language switcher', 'bea-mm' ), array( 'classname' => 'bea-multilingual-multisite language-switcher', 'description' => __( 'Display avalaible translation for current view.', 'bea-mm' ) ) );
 	}
 
 	/**
@@ -15,18 +15,18 @@ class Bea_MM_Widget extends WP_Widget {
 	 * @args			The array of form elements
 	 * @instance		The current instance of the widget
 	 */
-	public function widget($args, $instance) {
-		extract($args, EXTR_SKIP);
+	public function widget( $args, $instance ) {
+		extract( $args, EXTR_SKIP );
 
 		echo $before_widget;
 
 		// TODO: This is where you retrieve the widget values
-		$title = apply_filters('widget_title', empty($instance['title']) ? __('Widget Name', 'bea-mm') : $instance['title'], $instance, $this -> id_base);
+		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? __( 'Widget Name', 'bea-mm' ) : $instance['title'], $instance, $this->id_base );
 
 		// Display the widget, allow take template from child or parent theme
-		if (is_file(STYLESHEETPATH . '/widget-views/widget-name.php')) {// Use custom template from child theme
+		if ( is_file( STYLESHEETPATH . '/widget-views/widget-name.php' ) ) {// Use custom template from child theme
 			include (STYLESHEETPATH . '/widget-views/widget-name.php');
-		} elseif (is_file(TEMPLATEPATH . '/widget-views/widget-name.php')) {// Use custom template from parent theme
+		} elseif ( is_file( TEMPLATEPATH . '/widget-views/widget-name.php' ) ) {// Use custom template from parent theme
 			include (TEMPLATEPATH . '/widget-views/widget-name.php');
 		} else {// Use builtin temlate
 			include (BEA_MM_DIR . '/widgets/widget.php');
@@ -42,11 +42,11 @@ class Bea_MM_Widget extends WP_Widget {
 	 * @new_instance	The previous instance of values before the update.
 	 * @old_instance	The new instance of values to be generated via the update.
 	 */
-	public function update($new_instance, $old_instance) {
+	public function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
 
 		// TODO Update the widget with the new values
-		$instance['title'] = strip_tags($new_instance['title']);
+		$instance['title'] = strip_tags( $new_instance['title'] );
 
 		return $instance;
 
@@ -57,11 +57,12 @@ class Bea_MM_Widget extends WP_Widget {
 	 *
 	 * @instance	The array of keys and values for the widget.
 	 */
-	public function form($instance) {
+	public function form( $instance ) {
 		// TODO define default values for your variables
-		$instance = wp_parse_args((array)$instance, array('title' => __('Widget Name', 'bea-mm'), ));
-		
+		$instance = wp_parse_args( (array)$instance, array( 'title' => __( 'Widget Name', 'bea-mm' ), ) );
+
 		// Display the admin form
 		include (BEA_MM_DIR . '/widgets/admin.php');
 	}
+
 }

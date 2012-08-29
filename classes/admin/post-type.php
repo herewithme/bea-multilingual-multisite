@@ -14,13 +14,13 @@ class Bea_MM_Admin_PostType {
 	 */
 	public static function add_meta_boxes( ) {
 		// This blog have group ?
-		if ( Bea_MM_GroupSites_Factory::get_current_group() == false)
+		if ( Bea_MM_GroupSites_Factory::get_current_group( ) == false )
 			return false;
-		
+
 		foreach ( get_post_types(array('show_ui' => true), 'names') as $cpt ) {
 			add_meta_box( 'bea-mm', __( 'Translations', 'bea-mm' ), array( __CLASS__, 'metabox' ), $cpt, 'side', 'high' );
 		}
-		
+
 		return true;
 	}
 
@@ -30,8 +30,8 @@ class Bea_MM_Admin_PostType {
 	 * @return [type]
 	 */
 	public static function metabox( $object ) {
-		$current_groupsites = Bea_MM_GroupSites_Factory::get_current_group();
-		
+		$current_groupsites = Bea_MM_GroupSites_Factory::get_current_group( );
+
 		// Always show this nonce field for detect metabox for save
 		wp_nonce_field( 'form-bea-mm', 'bea_mm_noncename' );
 

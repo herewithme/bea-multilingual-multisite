@@ -20,7 +20,7 @@ class Bea_MM_Translation_Factory {
 	 */
 	public function __construct( $view = null, $args = null, $blog_id = 0 ) {
 		if ( $view === null && $args === null ) {
-			$this->_setupDataFromQuery();
+			$this->_setupDataFromQuery( );
 		} else {
 			$this->view = $view;
 			$this->view_args = $args;
@@ -29,7 +29,6 @@ class Bea_MM_Translation_Factory {
 		// setup blog id
 		$this->view_blog_id = ($blog_id == 0) ? get_current_blog_id( ) : $blog_id;
 	}
-	
 
 	/**
 	 * Get info of current view from WP_Query
@@ -89,10 +88,10 @@ class Bea_MM_Translation_Factory {
 	 */
 	public function getCurrentLanguage( ) {
 		$group_sites = Bea_MM_GroupSites_Factory::get_group_by_blog_id( $this->view_blog_id );
-		if ( $group_sites == false || !isset($group_sites[$this->view_blog_id]) )
+		if ( $group_sites == false || !isset( $group_sites[$this->view_blog_id] ) )
 			return false;
-		
-		return $group_sites[$this->view_blog_id]->get_language_code();
+
+		return $group_sites[$this->view_blog_id]->get_language_code( );
 	}
 
 	/**
@@ -101,7 +100,7 @@ class Bea_MM_Translation_Factory {
 	 */
 	public function getAvailableTranslations( ) {
 		foreach ( $this->getSites() as $site ) {
-			$instance = new $this->_getObject( $site->get_blog_id() );
+			$instance = new $this->_getObject( $site->get_blog_id( ) );
 			if ( $instance == false ) {
 				continue;
 			}
@@ -118,7 +117,7 @@ class Bea_MM_Translation_Factory {
 	 */
 	private function _getObject( $blog_id = 0 ) {
 		$this->view_args['blog_id'] = ($blog_id == 0) ? $this->view_blog_id : $blog_id;
-		
+
 		if ( $this->view == 'home' ) {
 			return new Bea_MM_Translation_View_Home( $this->view_args );
 		} elseif ( $this->view == 'day' ) {

@@ -15,7 +15,7 @@ class Bea_MM_GroupSites_Factory {
 	 * @return array|false
 	 */
 	public static function get_current_group( ) {
-		return self::get_group_by_blog_id( get_current_blog_id() );
+		return self::get_group_by_blog_id( get_current_blog_id( ) );
 	}
 
 	/**
@@ -25,7 +25,7 @@ class Bea_MM_GroupSites_Factory {
 	 */
 	public static function get_group_by_blog_id( $blog_id = 0 ) {
 		global $groupsites_factory;
-		
+
 		foreach ( $groupsites_factory as $name => $item ) {
 			foreach ( $item['blogs'] as $id => $blog ) {
 				if ( $blog_id == $id ) {
@@ -70,7 +70,7 @@ class Bea_MM_GroupSites_Factory {
 	 */
 	public static function register( $name = '', $label = '', $blogs = array() ) {
 		global $groupsites_factory;
-		
+
 		if ( empty( $name ) || empty( $label ) || empty( $blogs ) || !is_array( $blogs ) ) {
 			return false;
 		}
