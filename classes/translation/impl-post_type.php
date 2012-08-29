@@ -13,7 +13,7 @@ class Bea_MM_Translation_View_PostType implements Bea_MM_Translation_View {
 			// If group exist, load connections for this group
 			$factory = new Bea_MM_Connection_Factory( );
 			$factory->load_by_group_id( $connexion->get_group_id( ) );
-			
+
 			// Get translated connection for destination blog id
 			$this->connection = $factory->get_by_blog_id( $this->obj->blog_id );
 		}
@@ -30,7 +30,7 @@ class Bea_MM_Translation_View_PostType implements Bea_MM_Translation_View {
 	public function get_id( ) {
 		if ( $this->connection == NULL )
 			return NULL;
-		
+
 		return $this->connection->get_id( );
 	}
 
@@ -39,7 +39,7 @@ class Bea_MM_Translation_View_PostType implements Bea_MM_Translation_View {
 			return NULL;
 
 		switch_to_blog( $this->obj->blog_id );
-		$return_value = get_permalink( $this->connection->get_id() );
+		$return_value = get_permalink( $this->connection->get_id( ) );
 		restore_current_blog( );
 
 		return $return_value;
@@ -50,7 +50,7 @@ class Bea_MM_Translation_View_PostType implements Bea_MM_Translation_View {
 			return NULL;
 
 		switch_to_blog( $this->obj->blog_id );
-		$return_value = get_permalink( $this->connection->get_id() );
+		$return_value = get_permalink( $this->connection->get_id( ) );
 		restore_current_blog( );
 
 		return $return_value;
