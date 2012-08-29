@@ -139,7 +139,7 @@ class Bea_MM_Translation_Factory {
 	}
 
 	/**
-	 * [getCurrentLanguage description]
+	 * [_getBlog description]
 	 * @return [type]
 	 */
 	private function _getBlog( $blog_id = 0 ) {
@@ -150,7 +150,7 @@ class Bea_MM_Translation_Factory {
 	}
 
 	/**
-	 * [getCurrentLanguage description]
+	 * [_getCurrentBlog description]
 	 * @return [type]
 	 */
 	private function _getCurrentBlog( ) {
@@ -215,7 +215,7 @@ class Bea_MM_Translation_Factory {
 	/**
 	 * Whether there are more posts available in the loop.
 	 *
-	 * @access publicd
+	 * @access public
 	 *
 	 * @return bool True if posts are available, false if end of loop.
 	 */
@@ -235,7 +235,7 @@ class Bea_MM_Translation_Factory {
 	 *
 	 * @access public
 	 *
-	 * @return WP_Post Next post.
+	 * @return Bea_MM_Translation_View Next translation.
 	 */
 	public function next_translation( ) {
 		$this->current_translation++;
@@ -257,6 +257,13 @@ class Bea_MM_Translation_Factory {
 		}
 	}
 
+	/**
+	 * Check if translation exists, use Bea_MM_Translation_View is_available method
+	 * 
+	 * @access public
+	 *
+	 * @return boolean
+	 */
 	public function translation_exists( ) {
 		if ( $this->translation == NULL )
 			return false;
@@ -264,6 +271,13 @@ class Bea_MM_Translation_Factory {
 		return $this->translation->is_available( );
 	}
 
+	/**
+	 * Get translation type, use Bea_MM_Translation_View get_type method
+	 * 
+	 * @access public
+	 *
+	 * @return string
+	 */
 	public function get_translation_type( ) {
 		if ( $this->translation == NULL )
 			return NULL;
@@ -271,6 +285,13 @@ class Bea_MM_Translation_Factory {
 		return $this->translation->get_type( );
 	}
 
+	/**
+	 * Get translation id, use Bea_MM_Translation_View get_id method
+	 * 
+	 * @access public
+	 *
+	 * @return integer
+	 */
 	public function get_translation_id( ) {
 		if ( $this->translation == NULL )
 			return NULL;
@@ -278,6 +299,13 @@ class Bea_MM_Translation_Factory {
 		return $this->translation->get_id( );
 	}
 
+	/**
+	 * Get translation classes, use Bea_MM_Translation_View get_classes method
+	 * 
+	 * @access public
+	 *
+	 * @return string
+	 */
 	public function get_translation_classes( ) {
 		if ( $this->translation == NULL )
 			return NULL;
@@ -285,6 +313,13 @@ class Bea_MM_Translation_Factory {
 		return $this->translation->get_classes( );
 	}
 
+	/**
+	 * Get translation title, use Bea_MM_Translation_View get_title method
+	 * 
+	 * @access public
+	 *
+	 * @return string
+	 */
 	public function get_translation_title( ) {
 		if ( $this->translation == NULL )
 			return NULL;
@@ -292,6 +327,13 @@ class Bea_MM_Translation_Factory {
 		return $this->translation->get_title( );
 	}
 
+	/**
+	 * Get translation permalink, use Bea_MM_Translation_View get_permalink method
+	 * 
+	 * @access public
+	 *
+	 * @return string
+	 */
 	public function get_translation_permalink( ) {
 		if ( $this->translation == NULL )
 			return NULL;
@@ -299,6 +341,13 @@ class Bea_MM_Translation_Factory {
 		return $this->translation->get_permalink( );
 	}
 
+	/**
+	 * Get translation blog id, use Bea_MM_Translation_View get_blog_id method
+	 * 
+	 * @access public
+	 *
+	 * @return integer
+	 */
 	public function get_translation_blog_id( ) {
 		if ( $this->translation == NULL )
 			return NULL;
@@ -306,6 +355,13 @@ class Bea_MM_Translation_Factory {
 		return $this->translation->get_blog_id( );
 	}
 
+	/**
+	 * Get translation blog id, use Bea_MM_Translation_View get_blog_id method
+	 * 
+	 * @access public
+	 *
+	 * @return integer
+	 */
 	public function get_blog_id( ) {
 		if ( $this->translation == NULL )
 			return NULL;
@@ -313,14 +369,28 @@ class Bea_MM_Translation_Factory {
 		return $this->translation->get_blog_id( );
 	}
 
-	public function get_language_label( ) {
+	/**
+	 * Get blog language label, use Bea_MM_GroupSites_Site get_language_label method
+	 * 
+	 * @access public
+	 *
+	 * @return integer
+	 */
+	public function get_language_label( $admin_label = false ) {
 		$blog = $this->_getBlog( $this->get_translation_blog_id( ) );
 		if ( $blog == false )
 			return NULL;
 
-		return $blog->get_language_label( );
+		return $blog->get_language_label( $admin_label );
 	}
 
+	/**
+	 * Get blog language code, use Bea_MM_GroupSites_Site get_language_code method
+	 * 
+	 * @access public
+	 *
+	 * @return integer
+	 */
 	public function get_language_code( ) {
 		$blog = $this->_getBlog( $this->get_translation_blog_id( ) );
 		if ( $blog == false )
@@ -329,6 +399,13 @@ class Bea_MM_Translation_Factory {
 		return $blog->get_language_code( );
 	}
 
+	/**
+	 * Get blog permalink, use Bea_MM_GroupSites_Site get_home_permalink method
+	 * 
+	 * @access public
+	 *
+	 * @return integer
+	 */
 	public function get_home_permalink( ) {
 		$blog = $this->_getBlog( $this->get_translation_blog_id( ) );
 		if ( $blog == false )

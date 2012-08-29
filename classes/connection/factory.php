@@ -59,10 +59,19 @@ class Bea_MM_Connection_Factory {
 		}
 	}
 	
+	/**
+	 * Get all connections
+	 * @return array [description]
+	 */
 	function get_all() {
 		return $this->objects;
 	}
 	
+	/**
+	 * Get the connection for the specified blog id
+	 * @param  integer $blog_id [description]
+	 * @return [type]           [description]
+	 */
 	function get_by_blog_id( $blog_id = 0 ) {
 		if ( isset($this->objects[$blog_id]) ) {
 			return $this->objects[$blog_id];
