@@ -7,7 +7,7 @@ class Bea_MM_Translation_View_Month implements Bea_MM_Translation_View {
 		$this->obj = (object) wp_parse_args( $args, $defaults );
 	}
 
-	public function get_site_id( ) {
+	public function get_blog_id( ) {
 		return $this->obj->blog_id;
 	}
 
@@ -20,12 +20,21 @@ class Bea_MM_Translation_View_Month implements Bea_MM_Translation_View {
 	}
 
 	public function get_permalink( ) {
-		return get_month_link( $this->obj->year, $this->obj->monthnum );
+		switch_to_blog( $this->obj->blog_id );
+		$return_value = get_month_link( $this->obj->year, $this->obj->monthnum );
+		restore_current_blog();
+		
+		return $return_value;
 	}
 
 	public function get_title( ) {
 		global $wp_locale;
-		return sprintf( __( '%1$s %2$d' ), $wp_locale->get_month( $this->obj->monthnum ), $this->obj->year );
+		
+		switch_to_blog( $this->obj->blog_id );
+		$return_value = sprintf( __( '%1$s %2$d' ), $wp_locale->get_month( $this->obj->monthnum ), $this->obj->year );
+		restore_current_blog();
+		
+		return $return_value;
 	}
 
 	public function get_classes( ) {
@@ -34,11 +43,12 @@ class Bea_MM_Translation_View_Month implements Bea_MM_Translation_View {
 
 	public function is_available( ) {
 		global $wpdb;
-		return $wpdb->get_var( $wpdb->prepare( "SELECT count(ID) FROM {$wpdb->posts} WHERE YEAR(post_date) = %d AND MONTH(post_date) = %d AND post_status = 'publish'", $this->obj->year, $this->obj->monthnum ) );
-	}
-
-	public function __get( $key = '' ) {
-		return (isset( $this->obj->$key ) ? $this->obj->$key : null);
+		
+		switch_to_blog( $this->obj->blog_id );
+		$return_value = $wpdb->get_var( $wpdb->prepare( "SELECT count(ID) FROM {$wpdb->posts} WHERE YEAR(post_date) = %d AND MONTH(post_date) = %d AND post_status = 'publish'", $this->obj->year, $this->obj->monthnum ) );
+		restore_current_blog();
+		
+		return $return_value;
 	}
 
 }

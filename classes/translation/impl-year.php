@@ -7,7 +7,7 @@ class Bea_MM_Translation_View_Year implements Bea_MM_Translation_View {
 		$this->obj = (object) wp_parse_args( $args, $defaults );
 	}
 
-	public function get_site_id( ) {
+	public function get_blog_id( ) {
 		return $this->obj->blog_id;
 	}
 
@@ -20,7 +20,11 @@ class Bea_MM_Translation_View_Year implements Bea_MM_Translation_View {
 	}
 
 	public function get_permalink( ) {
-		return get_year_link( $this->obj->year );
+		switch_to_blog( $this->obj->blog_id );
+		$return_value = get_year_link( $this->obj->year );
+		restore_current_blog();
+		
+		return $return_value;
 	}
 
 	public function get_title( ) {
@@ -33,10 +37,11 @@ class Bea_MM_Translation_View_Year implements Bea_MM_Translation_View {
 
 	public function is_available( ) {
 		global $wpdb;
-		return $wpdb->get_var( $wpdb->prepare( "SELECT count(ID) FROM {$wpdb->posts} WHERE YEAR(post_date) = %d AND post_status = 'publish'", $this->obj->year ) );
-	}
-
-	public function __get( $key = '' ) {
-		return (isset( $this->obj->$key ) ? $this->obj->$key : null);
+		
+		switch_to_blog( $this->obj->blog_id );
+		$return_value = $wpdb->get_var( $wpdb->prepare( "SELECT count(ID) FROM {$wpdb->posts} WHERE YEAR(post_date) = %d AND post_status = 'publish'", $this->obj->year ) );
+		restore_current_blog();
+		
+		return $return_value;
 	}
 }

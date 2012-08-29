@@ -4,10 +4,10 @@ class Bea_MM_Translation_View_Taxonomy implements Bea_MM_Translation_View {
 
 	function __construct( $args = array() ) {
 		$defaults = array( 'blog_id' => 0 );
-		$this->$obj = (object) wp_parse_args( $args, $defaults );
+		$this->obj = (object) wp_parse_args( $args, $defaults );
 	}
 
-	public function get_site_id( ) {
+	public function get_blog_id( ) {
 	}
 
 	public function get_type( ) {
@@ -26,10 +26,6 @@ class Bea_MM_Translation_View_Taxonomy implements Bea_MM_Translation_View {
 	}
 
 	public function is_available( ) {
-	}
-
-	public function __get( $key = '' ) {
-		return (isset( $this->obj->$key ) ? $this->obj->$key : null);
 	}
 
 }
