@@ -79,7 +79,7 @@ class Bea_MM_Translation_Factory {
 	}
 
 	/**
-	 * [getAvailableTranslations description]
+	 * [init description]
 	 * @return [type]
 	 */
 	public function init( ) {

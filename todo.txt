@@ -1,7 +1,6 @@
 Todo :
 
 API
-	Register translation sets
 
 Admin
 	Dashboard widget in root blog displaying all posts which still have to be translated
@@ -28,6 +27,7 @@ Client
 	browser language detection and automatically forwarding to the correct language
 		For homepage
 		For allpage
+		Lightbox ?
 
 	Wide taxo 
 

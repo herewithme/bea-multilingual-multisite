@@ -135,4 +135,12 @@ class Bea_MM_Connection_Factory {
 		return $group_id;
 	}
 
+	/**
+	 * Static method for remove all connection for a blog
+	 * @return integer number of rows deleted
+	 */
+	public static remove_connections_by_blog( $blog_id = 0 ) {
+		global $wpdb;
+		return $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->bea_mm_connections} WHERE blog_id = %d",  $blog_id));
+	}
 }
