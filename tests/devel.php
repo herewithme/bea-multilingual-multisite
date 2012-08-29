@@ -2,7 +2,7 @@
 require( dirname(__FILE__) . '/config.php' );
 
 echo "\n\n\n\n new Bea_MM_Translation_Factory \n";
-$translation_factory = new Bea_MM_Translation_Factory('post_type', array('post_id' => 1), 3);
+$translation_factory = new Bea_MM_Translation_Factory('taxonomy', array('term_taxonomy_id' => 1), 3);
 if ($translation_factory -> have_translations()) {
 	while ($translation_factory -> have_translations()) {
 		$translation_factory -> the_translation();
