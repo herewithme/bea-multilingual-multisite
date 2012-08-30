@@ -71,7 +71,7 @@ class Bea_MM_GroupSites_Factory {
 	public static function register( $name = '', $label = '', $blogs = array() ) {
 		global $groupsites_factory;
 
-		if ( empty( $name ) || empty( $label ) || empty( $blogs ) || !is_array( $blogs ) ) {
+		if ( empty( $name ) || empty( $label ) ) {
 			return false;
 		}
 
@@ -82,7 +82,7 @@ class Bea_MM_GroupSites_Factory {
 		$groupsites_factory[$name]['blogs'] = array( );
 
 		// Add blogs object
-		foreach ( $blogs as $blog ) {
+		foreach ( (array) $blogs as $blog ) {
 			self::append( $name, $blog );
 		}
 

@@ -93,4 +93,3 @@ function init_bea_multilingual_multisite() {
 	// Widget
 	add_action('widgets_init', create_function('', 'return register_widget("Bea_MM_Widget");'));
 }
-?>
