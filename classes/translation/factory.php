@@ -70,7 +70,7 @@ class Bea_MM_Translation_Factory {
 
 		// setup blog id
 		$this->view_blog_id = ($blog_id == 0) ? get_current_blog_id( ) : $blog_id;
-		
+
 		// Init group sites
 		$this->groupsites = Bea_MM_GroupSites_Factory::get_group_by_blog_id( $this->view_blog_id );
 
@@ -164,7 +164,7 @@ class Bea_MM_Translation_Factory {
 	private function _getObject( $blog_id = 0 ) {
 		$this->view_args['source_blog_id'] = $this->view_blog_id;
 		$this->view_args['blog_id'] = ($blog_id == 0) ? $this->view_blog_id : $blog_id;
-		
+
 		if ( $this->view == 'home' ) {
 			return new Bea_MM_Translation_View_Home( $this->view_args );
 		} elseif ( $this->view == 'day' ) {
@@ -259,7 +259,7 @@ class Bea_MM_Translation_Factory {
 
 	/**
 	 * Check if translation exists, use Bea_MM_Translation_View is_available method
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @return boolean
@@ -272,8 +272,26 @@ class Bea_MM_Translation_Factory {
 	}
 
 	/**
+	 * Checks if current translation corresponds to the current blog
+	 *
+	 * @access public
+	 *
+	 * @return boolean
+	 */
+	public function is_current_translation( $blog_id = 0 ) {
+		if ( $this->translation == NULL )
+			return NULL;
+
+		if ( (int)$blog_id == 0 ) {
+			$blog_id = get_current_blog_id( );
+		}
+		
+		return ($this->translation->get_blog_id( ) == $blog_id);
+	}
+
+	/**
 	 * Get translation type, use Bea_MM_Translation_View get_type method
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @return string
@@ -287,7 +305,7 @@ class Bea_MM_Translation_Factory {
 
 	/**
 	 * Get translation id, use Bea_MM_Translation_View get_id method
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @return integer
@@ -301,7 +319,7 @@ class Bea_MM_Translation_Factory {
 
 	/**
 	 * Get translation classes, use Bea_MM_Translation_View get_classes method
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @return string
@@ -315,7 +333,7 @@ class Bea_MM_Translation_Factory {
 
 	/**
 	 * Get translation title, use Bea_MM_Translation_View get_title method
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @return string
@@ -329,7 +347,7 @@ class Bea_MM_Translation_Factory {
 
 	/**
 	 * Get translation permalink, use Bea_MM_Translation_View get_permalink method
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @return string
@@ -343,7 +361,7 @@ class Bea_MM_Translation_Factory {
 
 	/**
 	 * Get translation blog id, use Bea_MM_Translation_View get_blog_id method
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @return integer
@@ -357,7 +375,7 @@ class Bea_MM_Translation_Factory {
 
 	/**
 	 * Get translation blog id, use Bea_MM_Translation_View get_blog_id method
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @return integer
@@ -371,7 +389,7 @@ class Bea_MM_Translation_Factory {
 
 	/**
 	 * Get blog language label, use Bea_MM_GroupSites_Site get_language_label method
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @return integer
@@ -386,7 +404,7 @@ class Bea_MM_Translation_Factory {
 
 	/**
 	 * Get blog language code, use Bea_MM_GroupSites_Site get_language_code method
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @return integer
@@ -401,7 +419,7 @@ class Bea_MM_Translation_Factory {
 
 	/**
 	 * Get blog permalink, use Bea_MM_GroupSites_Site get_home_permalink method
-	 * 
+	 *
 	 * @access public
 	 *
 	 * @return integer
