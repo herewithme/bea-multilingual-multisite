@@ -25,13 +25,10 @@ if ($translation_factory -> have_translations()) {
 }
 
 // Manual init view
-$translation_factory = new Bea_MM_Translation_Factory('home', array('blog_id' => 3), true);
+$translation_factory = new Bea_MM_Translation_Factory('home', array(), 3);
 if ($translation_factory -> have_translations()) {
 	while ($translation_factory -> have_translations()) {
 		$translation_factory -> the_translation();
-		
-		if ( !$translation_factory->translation_exists() ) 
-			continue;
 		
 		if ( !$translation_factory->translation_exists() ) {
 			continue; // Or show home page link
