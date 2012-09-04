@@ -19,11 +19,10 @@ Widgets
 	Show translation available
 
 Client
-	Init translation sets with API
 	Shortcodes
 	Filter
 	Menu item ?
-	browser language detection and automatically forwarding to the correct language
+	browser language detection and automatically forwarding to the correct language (http://www.php.net/manual/en/function.http-negotiate-language.php)
 		For homepage
 		For allpage
 		Lightbox ?

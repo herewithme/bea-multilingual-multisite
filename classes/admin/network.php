@@ -3,7 +3,7 @@
  * This class to manage (add/edit/delete) "translation group sites" on network administration
  */
 class Bea_MM_Admin_Network {
-	const admin_slug = 'multisite-languages';
+	const admin_slug = 'bea-translation-groups';
 
 	/**
 	 * Register hooks
@@ -167,5 +167,4 @@ class Bea_MM_Admin_Network {
 			add_settings_error( 'bea-mm-network', 'translation_group', __( 'Translation group updated.' ), 'updated' );
 		}
 	}
-
 }

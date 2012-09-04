@@ -35,8 +35,8 @@ function init_bea_multilingual_multisite_devel() {
 		'site-canada',
 		'Canada',
 		array(
-			array( 'blog_id' => 1, 'language_code' => 'en_US', 'public_label' => 'English',  'admin_label' => 'English' ),
-			array( 'blog_id' => 2, 'language_code' => 'fr_CA', 'public_label' => 'Français', 'admin_label' => 'French' )
+			array( 'blog_id' => 1, 'language_code' => 'en_US', 'public_label' => 'English',  'admin_label' => 'English', 'user_language' => 'en' ),
+			array( 'blog_id' => 2, 'language_code' => 'fr_CA', 'public_label' => 'Français', 'admin_label' => 'French', 'user_language' => 'fr' )
 		)
 	);
 	
@@ -44,10 +44,9 @@ function init_bea_multilingual_multisite_devel() {
 		'site-switzerland',
 		'Switzerland',
 		array(
-			array( 'blog_id' => 3, 'language_code' => 'de_DE', 'public_label' => 'German',   'admin_label' => 'German' ),
-			array( 'blog_id' => 4, 'language_code' => 'fr_FR', 'public_label' => 'Français', 'admin_label' => 'French' ),
-			array( 'blog_id' => 5, 'language_code' => 'it_IT', 'public_label' => 'Italiano', 'admin_label' => 'Italian' ),
-			array( 'blog_id' => 6, 'language_code' => 'it_IT2', 'public_label' => 'Italiano 2', 'admin_label' => 'Italian 2' )
+			array( 'blog_id' => 3, 'language_code' => 'de_DE', 'public_label' => 'German',   'admin_label' => 'German', 'user_language' => 'de' ),
+			array( 'blog_id' => 4, 'language_code' => 'fr_FR', 'public_label' => 'Français', 'admin_label' => 'French', 'user_language' => 'fr' ),
+			array( 'blog_id' => 5, 'language_code' => 'it_IT', 'public_label' => 'Italiano', 'admin_label' => 'Italian', 'user_language' => 'it' )
 		)
 	);
 }

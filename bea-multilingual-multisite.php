@@ -84,7 +84,7 @@ function init_bea_multilingual_multisite() {
 	// Admin
 	if (is_admin()) {
 		// Class admin
-		// $bea_mm['admin-base'] 		= new Bea_MM_Admin();
+		$bea_mm['admin-base'] 		= new Bea_MM_Admin();
 		$bea_mm['admin-network'] 	= new Bea_MM_Admin_Network();
 		$bea_mm['admin-post-type'] 	= new Bea_MM_Admin_PostType();
 		$bea_mm['admin-taxonomy'] 	= new Bea_MM_Admin_Taxonomy();

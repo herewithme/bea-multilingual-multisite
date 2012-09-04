@@ -16,12 +16,16 @@ class Bea_MM_GroupSites_Site {
 	 * @param string  $language_code [description]
 	 * @param string  $public_label  [description]
 	 * @param string  $admin_label   [description]
+	 * @param string  $user_language   [description]
 	 */
-	public function __construct( $blog_id = 0, $language_code = '', $public_label = '', $admin_label = '' ) {
+	public function __construct( $blog_id = 0, $language_code = '', $public_label = '', $admin_label = '', $user_language = '' ) {
 		// All parameters are required
-		if ( $blog_id == 0 || empty( $language_code ) || empty( $public_label ) || empty( $admin_label ) ) {
+		if ( $blog_id == 0 || empty( $language_code ) || empty( $public_label ) ) {
 			return false;
 		}
+		
+		// Optionnal fields
+		$admin_label = ( empty($admin_label) ) ? $public_label : $admin_label;
 
 		// Blog exists ?
 		$blog = get_blog_details( $blog_id, false );
@@ -33,6 +37,7 @@ class Bea_MM_GroupSites_Site {
 		$this->obj->language_code = $language_code;
 		$this->obj->public_label = $public_label;
 		$this->obj->admin_label = $admin_label;
+		$this->obj->user_language = $user_language;
 
 		return true;
 	}
@@ -93,6 +98,18 @@ class Bea_MM_GroupSites_Site {
 			return null;
 
 		return get_home_url( $this->get_id( ), $path, $scheme );
+	}
+	
+
+	/**
+	 * Get user_language of language
+	 * @return string
+	 */
+	public function get_user_language( ) {
+		if ( !$this->exists( ) )
+			return null;
+
+		return $this->obj->user_language;
 	}
 
 }
