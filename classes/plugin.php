@@ -39,5 +39,55 @@ class Bea_MM_Plugin {
 	 */
 	public static function deactivate( ) {
 	}
+	
+	/**
+	 * Deactive plugin
+	 * @return [type]
+	 */
+	public static function getConnectionTypes() {
+		return array( 'post_type', 'term_taxonomy' );
+	}
+
+	/**
+	 * Retrieve or display list of objects as a dropdown (select list).
+	 *
+	 *
+	 * @param array|string $args Optional. Override default arguments.
+	 * @return string HTML content, if not displaying.
+	 */
+	public static function dropdownObjects( $query_args = '', $args = '' ) {
+		// Query args
+		$defaults_query = array( 'depth' => 0, 'child_of' => 0, 'post_type' => 'page', 'no_paging' => true );
+		$query_args = wp_parse_args( $query_args, $defaults_query );
+		
+		// Args
+		$defaults = array( 'depth' => 0, 'selected' => 0, 'echo' => 1, 'class' => '', 'name' => 'page_id', 'id' => '', 'show_option_none' => '', 'show_option_no_change' => '', 'option_none_value' => '', );
+		$r = wp_parse_args( $args, $defaults );
+		extract( $r, EXTR_SKIP );
+
+		$objects_query = new WP_Query( $query_args );
+		$output = '';
+		$name = esc_attr( $name );
+		$class = esc_attr( $class );
+		// Back-compat with old system where both id and name were based on $name argument
+		if ( empty( $id ) )
+			$id = $name;
+
+		if ( $objects_query->have_posts( ) ) {
+			$output = "<select name=\"$name\" id=\"$id\" class=\"$class\">\n";
+			if ( $show_option_no_change )
+				$output .= "\t<option value=\"-1\">$show_option_no_change</option>";
+			if ( $show_option_none )
+				$output .= "\t<option value=\"" . esc_attr( $option_none_value ) . "\">$show_option_none</option>\n";
+
+			$output .= walk_page_dropdown_tree( $objects_query->posts, $depth, $r );
+			$output .= "</select>\n";
+		}
+
+		if ( $echo )
+			echo $output;
+
+		return $output;
+	}
 
 }

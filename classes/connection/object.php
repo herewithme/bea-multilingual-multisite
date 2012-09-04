@@ -9,11 +9,6 @@ class Bea_MM_Connection_Object {
 	private $obj = null;
 
 	/**
-	 * Allowed object_type on DB
-	 */
-	private $allowed_types = array( 'post_type', 'term_taxonomy' );
-
-	/**
 	 * Constructor with conditionnal shortcuts for init method
 	 * @param string  $object_type [description]
 	 * @param integer $blog_id     [description]
@@ -38,12 +33,12 @@ class Bea_MM_Connection_Object {
 		global $wpdb;
 
 		// Security cast value, check object type
-		$object_type = (!in_array( $object_type, $this->allowed_types )) ? 'post_type' : $object_type;
+		$object_type = (!in_array( $object_type, Bea_MM_Plugin::getConnectionTypes( ) )) ? 'post_type' : $object_type;
 		$blog_id = (int)$blog_id;
 		$object_id = (int)$object_id;
 
 		// Setup object from DB
-		$this->obj = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->bea_mm_connections} WHERE object_type = %s AND blog_id = %d AND $object_id = %d", $object_type, $blog_id, $object_id ) );
+		$this->obj = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->bea_mm_connections} WHERE object_type = %s AND blog_id = %d AND object_id = %d", $object_type, $blog_id, $object_id ) );
 		if ( $this->obj == false ) {
 			// Make incomplete object for next usage when not exist on DB
 			$this->obj = new stdClass;
@@ -121,17 +116,17 @@ class Bea_MM_Connection_Object {
 		if ( !$this->exists( ) ) {
 			$this->add( );
 		}
-		
+
 		// Set group if line exist
 		if ( $this->exists( ) ) {
-			$wpdb->update( $wpdb->bea_mm_connections, array( 'group_id' => $group_id ), array('id' => $this->obj->id), array( '%d' ), array( '%d' ) );
+			$wpdb->update( $wpdb->bea_mm_connections, array( 'group_id' => $group_id ), array( 'id' => $this->obj->id ), array( '%d' ), array( '%d' ) );
 			$this->obj->group_id = $group_id;
 			return true;
 		}
 
 		return false;
 	}
-	
+
 	/**
 	 * Return connection object id
 	 * @return [type]
@@ -155,4 +150,5 @@ class Bea_MM_Connection_Object {
 	public function get_blog_id( ) {
 		return (int)$this->obj->blog_id;
 	}
+
 }
