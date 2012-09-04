@@ -39,7 +39,7 @@ class Bea_MM_Translation_View_PostType implements Bea_MM_Translation_View {
 		if ( $this->connection == NULL )
 			return NULL;
 
-		return $this->connection->get_id( );
+		return $this->connection->get_object_id( );
 	}
 
 	public function get_permalink( ) {
