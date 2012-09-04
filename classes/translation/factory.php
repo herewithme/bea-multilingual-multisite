@@ -181,7 +181,7 @@ class Bea_MM_Translation_Factory {
 			return new Bea_MM_Translation_View_PostTypeArchive( $this->view_args );
 		} elseif ( $this->view == 'post_type' || $this->view == 'post' || $this->view == 'page' ) {
 			return new Bea_MM_Translation_View_PostType( $this->view_args );
-		} elseif ( $this->view == 'taxonomy' ) {
+		} elseif ( $this->view == 'taxonomy' || $this->view == 'category' || $this->view == 'post_tag' || $this->view == 'term_taxonomy' ) {
 			return new Bea_MM_Translation_View_Taxonomy( $this->view_args );
 		} else {
 			return false;

@@ -33,7 +33,7 @@ class Bea_MM_Connection_Object {
 		global $wpdb;
 
 		// Security cast value, check object type
-		$object_type = (!in_array( $object_type, Bea_MM_Plugin::getConnectionTypes( ) )) ? 'post_type' : $object_type;
+		$object_type = (!in_array( $object_type, Bea_MM_Plugin::get_connection_types( ) )) ? 'post_type' : $object_type;
 		$blog_id = (int)$blog_id;
 		$object_id = (int)$object_id;
 

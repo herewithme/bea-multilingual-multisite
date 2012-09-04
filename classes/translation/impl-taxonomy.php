@@ -35,10 +35,13 @@ class Bea_MM_Translation_View_Taxonomy implements Bea_MM_Translation_View {
 			// If group exist, load connections for this group
 			$factory = new Bea_MM_Connection_Factory( );
 			$factory->load_by_group_id( $connexion->get_group_id( ) );
-
+			
 			// Get translated connection for destination blog id
 			$this->connection = $factory->get_by_blog_id( $this->obj->blog_id );
-
+			if ( $this->connection == false ) {
+				return false;
+			}
+			
 			// Setup destination term for API function usage
 			switch_to_blog( $this->obj->blog_id );
 			$term = $this->_get_term_by_tt_id( $this->connection->get_object_id( ) );

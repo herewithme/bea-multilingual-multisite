@@ -44,7 +44,7 @@ class Bea_MM_Plugin {
 	 * Deactive plugin
 	 * @return [type]
 	 */
-	public static function getConnectionTypes() {
+	public static function get_connection_types() {
 		return array( 'post_type', 'term_taxonomy' );
 	}
 
@@ -55,7 +55,7 @@ class Bea_MM_Plugin {
 	 * @param array|string $args Optional. Override default arguments.
 	 * @return string HTML content, if not displaying.
 	 */
-	public static function dropdownObjects( $query_args = '', $args = '' ) {
+	public static function dropdown_post_type_objects( $query_args = '', $args = '' ) {
 		// Query args
 		$defaults_query = array( 'depth' => 0, 'child_of' => 0, 'post_type' => 'page', 'no_paging' => true );
 		$query_args = wp_parse_args( $query_args, $defaults_query );

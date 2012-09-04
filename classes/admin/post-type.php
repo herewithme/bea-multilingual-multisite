@@ -30,7 +30,6 @@ class Bea_MM_Admin_PostType {
 	 * @return [type]
 	 */
 	public static function metabox( $object, $metabox ) {
-		$cptype =$metabox['args']['post_type'];
 		// Always show this nonce field for detect metabox for save
 		wp_nonce_field( 'form-bea-mm', 'bea_mm_noncename' );
 		
@@ -58,8 +57,8 @@ class Bea_MM_Admin_PostType {
 					$output .= '<label for="'.'translations-' . $translation_factory -> get_blog_id().'">'.$translation_factory -> get_language_label( true ).'</label>';
 				
 					switch_to_blog( $translation_factory -> get_blog_id() );
-						$output .= Bea_MM_Plugin::dropdownObjects( 
-							array('post_type' => $cptype, 'sort_column' => 'menu_order, post_title'), 
+						$output .= Bea_MM_Plugin::dropdown_post_type_objects( 
+							array('post_type' => $object->post_type, 'sort_column' => 'menu_order, post_title'), 
 							array( 'class' => 'widefat', 'echo' => 0, 'selected' => $current_id, 'name' => 'translations[' . $translation_factory -> get_blog_id() . ']', 'show_option_none' => ' ', 'option_none_value' => 0, 'id' => 'translations-' . $translation_factory -> get_blog_id() ) );
 					restore_current_blog();
 				$output .= '</p>';
