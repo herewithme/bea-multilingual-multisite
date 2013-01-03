@@ -56,6 +56,6 @@
 		</form>
 	<?php else : ?>
 		<p><?php _e('You do not have a translation groups.', 'bea-mm'); ?></p>
-		<p><?php e_('To start, connect the two sites contents of your network, you must create a translation group. Groups generally translations correspond to the name of a country. This country will usually several translations. Once the group is created, you can add an site.', 'bea-mm'); ?></p>
+		<p><?php _e('To start, connect the two sites contents of your network, you must create a translation group. Groups generally translations correspond to the name of a country. This country will usually several translations. Once the group is created, you can add an site.', 'bea-mm'); ?></p>
 	<?php endif;?>
 </div>
