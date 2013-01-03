@@ -135,8 +135,9 @@ class Bea_MM_Admin {
 			$_POST['translation']['blog_id'] = get_current_blog_id();
 
 			// Add data into settings and update
-			$db_settings[$group_name]['blogs'] = array();
+			$db_settings[$group_name]['blogs'] = isset( $db_settings[$group_name]['blogs'] ) ? $db_settings[$group_name]['blogs'] : array() ;
 			$db_settings[$group_name]['blogs'][get_current_blog_id()] = $_POST['translation'];
+			
 			update_site_option( BEA_MM_OPTION, $db_settings );
 
 			// Register new group
