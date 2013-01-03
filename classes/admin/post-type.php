@@ -7,6 +7,10 @@ class Bea_MM_Admin_PostType {
 		// Metabox translations
 		add_action( 'add_meta_boxes', array( __CLASS__, 'add_meta_boxes' ) );
 		add_action( 'save_post', array( __CLASS__, 'save_post' ), 10, 2 );
+		
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'add_ressources' ), 10 );
+		
+		add_action( 'wp_ajax_'.'bea_mm_search', array( __CLASS__, 'a_search' ), 10);
 	}
 
 	/**
@@ -53,19 +57,86 @@ class Bea_MM_Admin_PostType {
 					$current_id = 0;
 				}
 				
-				$output .= '<p>';
+				$output .= '<div>';
 					$output .= '<label for="'.'translations-' . $translation_factory -> get_blog_id().'">'.$translation_factory -> get_language_label( true ).'</label>';
-				
 					switch_to_blog( $translation_factory -> get_blog_id() );
 						$output .= Bea_MM_Plugin::dropdown_post_type_objects( 
-							array('post_type' => $object->post_type, 'sort_column' => 'menu_order, post_title'), 
-							array( 'class' => 'widefat', 'echo' => 0, 'selected' => $current_id, 'name' => 'translations[' . $translation_factory -> get_blog_id() . ']', 'show_option_none' => ' ', 'option_none_value' => 0, 'id' => 'translations-' . $translation_factory -> get_blog_id() ) );
+							array(
+								'post_type' => $object->post_type, 
+								'sort_column' => 'menu_order, post_title',
+								'post__in' => array( $current_id )
+							), 
+							array( 
+								'attrs' => array(
+									'data-blog_id' => $translation_factory -> get_blog_id(),
+									'data-post_type' => $object->post_type,
+									'data-nonce' => wp_create_nonce( 
+										'bea-mm-search-'.$object->post_type.'-'.$translation_factory -> get_blog_id(),
+										'bea-mm-search-'.$object->post_type.'-'.$translation_factory -> get_blog_id() )
+								),
+								'class' => 'widefat bea_chosen_select',
+								'echo' => 0, 
+								'selected' => $current_id, 
+								'name' => 'translations[' . $translation_factory -> get_blog_id() . ']', 
+								'show_option_none' => ' ', 
+								'option_none_value' => 0, 
+								'id' => 'translations-' . $translation_factory -> get_blog_id() 
+								)
+							);
 					restore_current_blog();
-				$output .= '</p>';
+				$output .= '</div>';
 			}
 		}
 		
 		echo $output;
+	}
+
+	private static function get_post_type_objects( $args = array() ) {
+		return Bea_MM_Plugin::get_post_type_query( $args );
+	}
+	/**
+	 * Ajax function for searching on a remote site
+	 * 
+	 * @param void
+	 * @return void
+	 * @author Nicolas Juen
+	 * 
+	 */
+	public static function a_search() {
+		
+		$post_type = isset( $_POST['post_type'] ) && post_type_exists( $_POST['post_type'] ) ? $_POST['post_type'] : '' ;
+		$blog_id = isset( $_POST['blog_id'] ) && (int)$_POST['blog_id'] > 0 ? (int)$_POST['blog_id'] : 0 ;
+		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '' ;
+		$search = !isset( $_POST['s'] ) || empty( $_POST['s'] ) ? '' : $_POST['s'];
+		
+		if( !wp_verify_nonce( $nonce, 'bea-mm-search-'.$post_type.'-'.$blog_id ) || empty( $search ) ) {
+			wp_send_json_error();
+		}
+		
+		switch_to_blog( $blog_id );
+			$query = Bea_MM_Plugin::get_post_type_query( 
+				array(
+					'post_type' => $post_type, 
+					'sort_column' => 'menu_order, post_title',
+					's' => $search,
+				)
+			);
+		restore_current_blog();
+		
+		if( !$query->have_posts() ) {
+			wp_send_json_error();
+		}
+		
+		$out = array();
+		while( $query->have_posts() ) {
+			$query->the_post();
+			$out[] = array(
+				'value' => get_the_ID(),
+				'text' => get_the_title()
+			);
+		}
+		
+		wp_send_json_success( $out );
 	}
 
 	/**
@@ -109,4 +180,7 @@ class Bea_MM_Admin_PostType {
 		}
 	}
 
+	public static function add_ressources() {
+		wp_enqueue_script( 'bea-mm-admin-scripts' );
+	}
 }
