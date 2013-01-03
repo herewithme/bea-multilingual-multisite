@@ -9,7 +9,10 @@ class Bea_MM_Admin {
 	 * Register hooks
 	 */
 	public function __construct( ) {
-		add_action( 'admin_init', array( __CLASS__, 'admin_init' ) );
+		add_action( 'admin_init', array( __CLASS__, 'admin_init' ), 1 );
+		
+		add_action( 'admin_init', array( __CLASS__, 'register_ressources' ), 2 );
+		
 		add_action( 'admin_menu', array( __CLASS__, 'admin_menu' ), 9 );
 	}
 
@@ -35,6 +38,16 @@ class Bea_MM_Admin {
 
 		add_options_page( __( 'Translations', 'bea-mm' ), __( 'Translations', 'bea-mm' ), 'manage_options', self::admin_slug, array( __CLASS__, 'page' ) );
 		return true;
+	}
+	
+	public static function register_ressources() {
+		// Register scripts
+		wp_register_script( 'chosen' , BEA_MM_URL.'/ressources/js/chosen.jquery.min.js', array( 'jquery' ), '0.9.11', true );
+		wp_register_script( 'chosen-ajax' , BEA_MM_URL.'/ressources/js/ajax-chosen.min.js', array( 'jquery', 'chosen' ), '0.9.11', true );
+		wp_register_script( 'bea-mm-admin-scripts', BEA_MM_URL.'/ressources/js/bea-mm-admin.js', array( 'jquery' ,'chosen-ajax', 'underscore' ) );
+		
+		// Register the styles
+		wp_register_style( 'chosen', BEA_MM_URL.'/ressources/css/chosen.css', array(), '1' );
 	}
 
 	/**
