@@ -101,13 +101,16 @@ class Bea_MM_Admin {
 			$_POST['translation'] = stripslashes_deep( $_POST['translation'] );
 
 			// Santize data
-			$_POST['translation']['language_code'] = sanitize_key( $_POST['translation']['language_code'] );
-			//$_POST['translation']['label'] = strip_tags( $_POST['translation']['label'] );
-			//$_POST['translation']['label'] = strip_tags( $_POST['translation']['label'] );
-			//$_POST['translation']['label'] = strip_tags( $_POST['translation']['label'] );
+			$group_name = $_POST['translation']['group'] = strip_tags( $_POST['translation']['group'] );
+			$_POST['translation']['language_code'] = strip_tags( $_POST['translation']['language_code'] );
+			$_POST['translation']['public_label'] = strip_tags( $_POST['translation']['public_label'] );
+			$_POST['translation']['admin_label'] = strip_tags( $_POST['translation']['admin_label'] );
+			$_POST['translation']['user_language'] = strip_tags( $_POST['translation']['user_language'] );
+			
+			// Custom check for code language
 
 			// All field are filled ?
-			if ( empty( $_POST['ngroup']['name'] ) || empty( $_POST['ngroup']['label'] ) ) {
+			if ( empty($group_name) || empty( $_POST['translation']['language_code'] ) || empty( $_POST['translation']['public_label'] ) || empty( $_POST['translation']['admin_label'] ) || empty( $_POST['translation']['user_language'] ) ) {
 				add_settings_error( 'bea-mm-network', 'translation_group', __( 'All fields are required.' ), 'error' );
 				return false;
 			}
@@ -116,29 +119,43 @@ class Bea_MM_Admin {
 			$groupsites = Bea_MM_GroupSites_Factory::get_all_groups( );
 
 			// Test if group exist ?
-			if ( isset( $groupsites[$_POST['ngroup']['name']] ) ) {
-				add_settings_error( 'bea-mm-network', 'translation_group', __( 'A translation group already exists with this name.' ), 'error' );
+			if ( !isset( $groupsites[$group_name] ) ) {
+				add_settings_error( 'bea-mm-network', 'translation_group', __( 'This group not exists.' ), 'error' );
 				return false;
 			}
-
+			
 			// Get existing settings
 			$db_settings = get_site_option( BEA_MM_OPTION );
 			if ( $db_settings == false ) {
-				$db_settings = array( );
+				add_settings_error( 'bea-mm-network', 'translation_group', __( 'No group on DB.' ), 'error' );
+				return false;
 			}
-
-			// Add empty blogs
-			$_POST['ngroup']['blogs'] = array( );
+			
+			// Add current blog id
+			$_POST['translation']['blog_id'] = get_current_blog_id();
 
 			// Add data into settings and update
-			$db_settings[$_POST['ngroup']['name']] = $_POST['ngroup'];
+			$db_settings[$group_name]['blogs'] = array();
+			$db_settings[$group_name]['blogs'][get_current_blog_id()] = $_POST['translation'];
 			update_site_option( BEA_MM_OPTION, $db_settings );
 
 			// Register new group
-			Bea_MM_GroupSites_Factory::register( $_POST['ngroup']['name'], $_POST['ngroup']['label'], $_POST['ngroup']['blogs'] );
+			Bea_MM_GroupSites_Factory::append($group_name, $_POST['translation'] );
 
-			add_settings_error( 'bea-mm-network', 'translation_group', __( 'Translation group added.' ), 'updated' );
+			add_settings_error( 'bea-mm-network', 'translation_group', __( 'Translation group saved.' ), 'updated' );
 		}
 	}
-
+	
+	public static function is_language_code( $code = '' ) {
+		if ( strpos($code, '_') === false || strlen($code) != 5 ) {
+			return false;
+		}
+	
+		$code = explode('_', $code);
+		if ( strtolower($code[0]) == $code[0] && strtoupper($code[1]) == $code[1] ) {
+			return true;
+		}
+		
+		return false;
+	}
 }

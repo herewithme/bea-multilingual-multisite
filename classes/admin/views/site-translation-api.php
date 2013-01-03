@@ -19,8 +19,8 @@
 				<td><?php echo esc_html($current_site->get_language_label(true)); ?></td>
 			</tr>
 			<tr valign="top">
-				<th scope="row"><?php _e('User agent', 'bea-mm'); ?></th>
-				<td><?php echo esc_html($current_site->get_user_agent()); ?></td>
+				<th scope="row"><?php _e('User language', 'bea-mm'); ?></th>
+				<td><?php echo esc_html($current_site->get_user_language()); ?></td>
 			</tr>
 		</tbody>
 	</table>
