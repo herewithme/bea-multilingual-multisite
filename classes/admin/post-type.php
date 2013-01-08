@@ -41,8 +41,8 @@ class Bea_MM_Admin_PostType {
 		
 		// Loop on translation
 		$translation_factory = new Bea_MM_Translation_Factory('post_type', array('post_id' => $object->ID),  get_current_blog_id());
-		if ($translation_factory -> have_translations()) {
-			while ($translation_factory -> have_translations()) {
+		if ( $translation_factory -> have_translations() ) {
+			while ( $translation_factory -> have_translations() ) {
 				$translation_factory -> the_translation();
 				
 				// Skip current translation
@@ -57,10 +57,10 @@ class Bea_MM_Admin_PostType {
 					$current_id = 0;
 				}
 				
-				$output .= '<div>';
+				$output .= '<div class="translation-block lang-'.esc_attr( $translation_factory->get_language_code() ).'" >';
 					$output .= '<label for="'.'translations-' . $translation_factory -> get_blog_id().'">'.$translation_factory -> get_language_label( true ).'</label>';
 					switch_to_blog( $translation_factory -> get_blog_id() );
-					$select = Bea_MM_Plugin::dropdown_post_type_objects( 
+						$select = Bea_MM_Plugin::dropdown_post_type_objects( 
 							array(
 								'post_type' => $object->post_type, 
 								'sort_column' => 'menu_order, post_title',
@@ -84,10 +84,18 @@ class Bea_MM_Admin_PostType {
 								)
 							) ;
 						$output .= empty( $select ) ? '<p>'.__( 'No more elements to associate with for this language', 'bea-mm' ).'</p>' : $select ;
+						
+						// If nothing selected, then add ability to generate draft in this language 
+						if( empty( $current_id ) ) {
+							$output .= '<label for="bea_mm_create-draft-' . $translation_factory -> get_blog_id().'"><input type="checkbox" id="bea_mm_create-draft-' . $translation_factory -> get_blog_id().'" name="bea_mm_create_draft[]" value="blog-' . $translation_factory -> get_blog_id().'" />'.sprintf( __( 'Create draft in %s', 'bea-mm' ), $translation_factory -> get_language_label( true ) ).'</label>';
+						}
+
 					restore_current_blog();
 				$output .= '</div>';
 			}
 		}
+
+		$output .= '<div class="bea_mm_create_all_drafts" ><button class="button button-primary button-large bea_mm_create_all_draft" >'.__( 'Create draft in all available languages' ).'</button></div>';
 		
 		echo $output;
 	}
