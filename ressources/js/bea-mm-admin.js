@@ -18,10 +18,23 @@ if( !fr.bea.mm ) {
 }
 
 fr.bea.mm = {
+	spinner : '',
 	init : function() {
 		var _s = this;
 		
+		// Check vars given
+		if( typeof bea_mm_vars !== 'object' ) {
+			throw new Error( 'bea_mm_vars have to be declared for this script run' );
+		}
+		
+		// Make an object
+		_s.spinner = jQuery( bea_mm_vars.spinner );
+		
+		// Chosen init
 		_s.initAjaxChosen( '.bea_chosen_select' );
+		
+		// All draft generator
+		_s.initDraftGenerator( '#bea_mm_create_all_drafts' );
 	},
 	initAjaxChosen : function( cl ) {
 		var el = jQuery( cl ),
@@ -48,10 +61,46 @@ fr.bea.mm = {
 			
 			return data.data;
 		}, {
-			allow_single_deselect: true,
+			allow_single_deselect: true
+		} );
+	},
+	initDraftGenerator : function( sl ) {
+		var el = jQuery( sl );
+		
+		// Handle the generator draft
+		el.on( 'click', 'button', function( e ) {
+			e.preventDefault();
+			
+			if( !el.hasClass( 'ajaxing' ) ) {
+				var bu = jQuery( this ),
+					nonce = bu.data( 'nonce' ),
+					post_type = bu.data( 'post_type' ),
+					blog_id = bu.data( 'blog_id' );
+				
+				jQuery.ajax( {
+					type : 'POST',
+					url : ajaxurl,
+					dataType : 'json',
+					data : {
+						action : 'bea_mm_auto_draft',
+						nonce : nonce,
+						post_type : post_type,
+						blog_id : blog_id,
+						id : document.getElementById( 'post_ID' ).value
+					},
+					beforeSend : function() {
+						el.addClass( 'ajaxing' );
+						bu.before( fr.bea.mm.spinner.show() );
+					},
+					success : function( resp ) {
+						el.removeClass( 'ajaxing' );
+						fr.bea.mm.spinner.hide();
+					}
+				} );
+			}
 		} );
 	}
-}
+};
 
 jQuery( function() {
 	fr.bea.mm.init();

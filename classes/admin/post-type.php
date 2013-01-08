@@ -11,6 +11,7 @@ class Bea_MM_Admin_PostType {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'add_ressources' ), 10 );
 		
 		add_action( 'wp_ajax_'.'bea_mm_search', array( __CLASS__, 'a_search' ), 10);
+		add_action( 'wp_ajax_'.'bea_mm_auto_draft', array( __CLASS__, 'a_create_drafts' ), 10);
 	}
 
 	/**
@@ -49,13 +50,9 @@ class Bea_MM_Admin_PostType {
 				if ( $translation_factory->is_current_translation() ) {
 					continue;
 				}
-				
-				// Get translated ID
-				if ( $translation_factory->translation_exists() ) {
-					$current_id = $translation_factory -> get_translation_id();
-				} else {
-					$current_id = 0;
-				}
+
+				// Get translated id
+				$current_id = $translation_factory->translation_exists() ? $translation_factory -> get_translation_id() : 0 ;
 				
 				$output .= '<div class="translation-block lang-'.esc_attr( $translation_factory->get_language_code() ).'" >';
 					$output .= '<label for="'.'translations-' . $translation_factory -> get_blog_id().'">'.$translation_factory -> get_language_label( true ).'</label>';
@@ -64,7 +61,8 @@ class Bea_MM_Admin_PostType {
 							array(
 								'post_type' => $object->post_type, 
 								'sort_column' => 'menu_order, post_title',
-								'post__in' => array( $current_id )
+								'post__in' => $current_id > 0 ? array( $current_id ): array(),
+								'post_status' => 'any'
 							), 
 							array( 
 								'attrs' => array(
@@ -95,7 +93,13 @@ class Bea_MM_Admin_PostType {
 			}
 		}
 
-		$output .= '<div class="bea_mm_create_all_drafts" ><button class="button button-primary button-large bea_mm_create_all_draft" >'.__( 'Create draft in all available languages' ).'</button></div>';
+		// Vars for the button
+		$nonce = "data-nonce='".wp_create_nonce( 'bea-mm-all-draft-'.$object->post_type.'-'.$translation_factory -> get_blog_id().'-'.$object->ID, 'bea-mm-all-draft-'.$object->post_type.'-'.$translation_factory -> get_blog_id().'-'.$object->ID )."'";
+		$blog_id = 'data-blog_id="'.get_current_blog_id().'"';
+		$post_type = 'data-post_type="'.$object->post_type.'"';;
+		
+		// General draft generation
+		$output .= '<div id="bea_mm_create_all_drafts" ><button '.$post_type.' '.$blog_id.' '.$nonce.' class="button button-primary button-large bea_mm_create_all_draft" >'.__( 'Create draft in all available languages' ).'</button></div>';
 		
 		echo $output;
 	}
@@ -128,6 +132,7 @@ class Bea_MM_Admin_PostType {
 					'post_type' => $post_type, 
 					'sort_column' => 'menu_order, post_title',
 					's' => $search,
+					'post_status' => 'any'
 				)
 			);
 		restore_current_blog();
@@ -146,6 +151,25 @@ class Bea_MM_Admin_PostType {
 		}
 		
 		wp_send_json_success( $out );
+	}
+
+	public static function a_create_drafts() {
+		
+		$post_type = isset( $_POST['post_type'] ) && post_type_exists( $_POST['post_type'] ) ? $_POST['post_type'] : '' ;
+		$blog_id = isset( $_POST['blog_id'] ) && (int)$_POST['blog_id'] > 0 ? (int)$_POST['blog_id'] : 0 ;
+		$object_id = isset( $_POST['id'] ) && (int)$_POST['id'] > 0 ? (int)$_POST['id'] : 0 ;
+		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '' ;
+		
+		if( !wp_verify_nonce( $nonce, 'bea-mm-all-draft-'.$post_type.'-'.$blog_id.'-'.$object_id ) ) {
+			wp_send_json_error( __( 'Security error', 'bea_mm' ) );
+		}
+		
+		$obj = get_post( $object_id );
+		if( !isset( $obj ) ) {
+			wp_send_json_error( __( 'Error during the post information gathering', 'bea_mm' ) );
+		}
+		
+		wp_send_json_success( self::create_object_drafts( $obj ) );
 	}
 
 	/**
@@ -191,5 +215,71 @@ class Bea_MM_Admin_PostType {
 
 	public static function add_ressources() {
 		wp_enqueue_script( 'bea-mm-admin-scripts' );
+		
+		wp_enqueue_style( 'chosen' );
+		wp_enqueue_style( 'bea-mm-admin' );
+	}
+	
+	/**
+	 * Create the draft in the desired blogs from the current given object and mark as translation
+	 * 
+	 * @param $object(object): WordPress post object
+	 * @param $blog_ids(array) : blog ids for the post association
+	 * @return array with status on each blog association
+	 * @author Nicolas Juen
+	 */
+	private static function create_object_drafts( $object ) {
+		if( !isset( $object ) || empty( $object ) || !isset( $object->ID ) ) {
+			return array();
+		}
+		
+		$translations_to_load = array();
+		$translation_factory = new Bea_MM_Translation_Factory( 'post_type', array( 'post_id' => $object->ID ),  get_current_blog_id() );
+		if ( $translation_factory -> have_translations() ) {
+			while ( $translation_factory -> have_translations() ) {
+				$translation_factory -> the_translation();
+				
+				// Skip current translation
+				if ( $translation_factory->is_current_translation() || $translation_factory->translation_exists() ) {
+					continue;
+				}
+				
+				$client_object_id = self::create_object_draft( $object, $translation_factory -> get_blog_id() );
+				
+				if( (int)$client_object_id > 0 ) {
+					$translations_to_load[] = array( 'blog_id' => $translation_factory -> get_blog_id(), 'object_id' => $client_object_id );
+				}
+			}
+		}
+		
+		// Add current object/blog
+		$translations_to_load[] = array( 'blog_id' => get_current_blog_id(), 'object_id' => $object->ID );
+		
+		// Init new factory and set group !
+		$connection_factory = new Bea_MM_Connection_Factory();
+		$connection_factory->load( 'post_type', $translations_to_load );
+		
+		// Group if more than one translations !
+		if ( count($translations_to_load) > 1 ) {
+			$connection_factory->group();
+		}
+		
+		return $translations_to_load;
+	}
+	
+	/**
+	 * Create the draft in the desired blog from the current given object and mark as translation
+	 * 
+	 * @param $object(object): WordPress post object
+	 * @param $blog_id(int) : blog ids for the post association
+	 * @return true|false on success/failure
+	 * @author Nicolas Juen
+	 */
+	private static function create_object_draft( $object, $blog_id ) {
+		if( !isset( $object ) || empty( $object ) || !isset( $object->ID ) || !isset( $blog_id ) || absint( $blog_id ) == 0 ) {
+			return false;
+		}
+		
+		return BEA_CSF_Server_PostType::wp_insert_post( $object->ID, $object, $blog_id );
 	}
 }

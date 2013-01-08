@@ -44,10 +44,16 @@ class Bea_MM_Admin {
 		// Register scripts
 		wp_register_script( 'chosen' , BEA_MM_URL.'/ressources/js/chosen.jquery.min.js', array( 'jquery' ), '0.9.11', true );
 		wp_register_script( 'chosen-ajax' , BEA_MM_URL.'/ressources/js/ajax-chosen.min.js', array( 'jquery', 'chosen' ), '0.9.11', true );
-		wp_register_script( 'bea-mm-admin-scripts', BEA_MM_URL.'/ressources/js/bea-mm-admin.js', array( 'jquery' ,'chosen-ajax', 'underscore' ) );
+		wp_register_script( 'bea-mm-admin-scripts', BEA_MM_URL.'/ressources/js/bea-mm-admin.js', array( 'jquery' ,'chosen-ajax', 'underscore' ), filemtime( BEA_MM_DIR.'/ressources/js/bea-mm-admin.js') );
+		
+		// Add vars for the main admin script
+		wp_localize_script( 'bea-mm-admin-scripts' , 'bea_mm_vars', array(
+			'spinner' => sprintf( '<img class="bea_mm_spinner" src="%s" />', admin_url( '/images/wpspin_light-2x.gif' ) )
+		) );
 		
 		// Register the styles
 		wp_register_style( 'chosen', BEA_MM_URL.'/ressources/css/chosen.css', array(), '1' );
+		wp_register_style( 'bea-mm-admin', BEA_MM_URL.'/ressources/css/bea_mm_admin.css', array(), '1' );
 	}
 
 	/**
