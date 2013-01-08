@@ -56,6 +56,10 @@ _bea_mm_load_files(BEA_MM_DIR . '/functions/', array('api', 'theme'));
 // Plugin client classes
 _bea_mm_load_files(BEA_MM_DIR . '/classes/', array('plugin', 'client', 'widget'));
 
+// Libs
+_bea_mm_load_files(BEA_MM_DIR . '/libs/bea_csf/client/', array( 'class.client', 'class.post_type', 'class.attachment' ) );
+_bea_mm_load_files(BEA_MM_DIR . '/libs/bea_csf/server/', array( 'class.client', 'class.post_type', 'class.attachment' ) );
+
 // Plugin client interface/class/implementations
 _bea_mm_load_files(BEA_MM_DIR . '/classes/group-sites/', array('factory', 'site'));
 _bea_mm_load_files(BEA_MM_DIR . '/classes/connection/', array('factory', 'object'));

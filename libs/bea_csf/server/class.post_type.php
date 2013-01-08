@@ -29,25 +29,6 @@ class BEA_CSF_Server_PostType {
 			$object['_thumbnail'] = false;
 		}
 		
-		// Get terms for this object
-		$taxonomies = get_object_taxonomies( $object['post_type'] );
-		if ( $taxonomies != false ) {
-			$object['terms'] = wp_get_object_terms( $object['ID'], $taxonomies );
-			foreach( $object['terms'] as $index => $term ) {
-				// Get parent TT_ID
-				if( $term->parent > 0 ) {
-					$parent_term = get_term( $term->parent, $term->taxonomy );
-					if ( $term != false && !is_wp_error( $term ) ) {
-						$term->parent_tt_id = $parent_term->term_taxonomy_id;
-					}
-				} else {
-					$term->parent_tt_id = 0;
-				}
-				
-				$object['terms'][$index] = (array) $term;
-			}
-		}
-		
 		// Init medias children
 		$object['medias'] = array();
 		
