@@ -29,7 +29,7 @@ fr.bea.mm = {
 		post_type = el.data( 'post_type' ),
 		blog_id = el.data( 'blog_id' );
 		
-		el.ajaxChosen({
+		el.ajaxChosen( {
 			type : 'POST',
 			url : ajaxurl,
 			dataType : 'json',
@@ -47,6 +47,8 @@ fr.bea.mm = {
 			}
 			
 			return data.data;
+		}, {
+			allow_single_deselect: true,
 		} );
 	}
 }
