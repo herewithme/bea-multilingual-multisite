@@ -60,7 +60,7 @@ class Bea_MM_Admin_PostType {
 				$output .= '<div>';
 					$output .= '<label for="'.'translations-' . $translation_factory -> get_blog_id().'">'.$translation_factory -> get_language_label( true ).'</label>';
 					switch_to_blog( $translation_factory -> get_blog_id() );
-						$output .= Bea_MM_Plugin::dropdown_post_type_objects( 
+					$select = Bea_MM_Plugin::dropdown_post_type_objects( 
 							array(
 								'post_type' => $object->post_type, 
 								'sort_column' => 'menu_order, post_title',
@@ -82,7 +82,8 @@ class Bea_MM_Admin_PostType {
 								'option_none_value' => 0, 
 								'id' => 'translations-' . $translation_factory -> get_blog_id() 
 								)
-							);
+							) ;
+						$output .= empty( $select ) ? '<p>'.__( 'No more elements to associate with for this language', 'bea-mm' ).'</p>' : $select ;
 					restore_current_blog();
 				$output .= '</div>';
 			}
