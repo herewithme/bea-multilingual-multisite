@@ -65,7 +65,7 @@ fr.bea.mm = {
 		} );
 	},
 	initDraftGenerator : function( sl ) {
-		var el = jQuery( sl );
+		var el = jQuery( sl ), _s = this;
 		
 		// Handle the generator draft
 		el.on( 'click', 'button', function( e ) {
@@ -95,10 +95,42 @@ fr.bea.mm = {
 					success : function( resp ) {
 						el.removeClass( 'ajaxing' );
 						fr.bea.mm.spinner.hide();
+						
+						_s.draftSelect( resp )
+						console.log( { number : resp.data.length } );
+						el.find( '.messages' ).removeClass('error success').addClass( resp.success === true ? "success" : "error" ).html( resp.success === true ? _.template( bea_mm_vars.draftSuccess, { number : resp.data.length } ) : bea_mm_vars.draftFailed );
 					}
 				} );
 			}
 		} );
+	},
+	draftSelect : function( resp ) {
+		var total = resp.data.length,
+		i =0,
+		tmpl = "<option value='<%= object_id %>'><%= title %></option>";
+		
+		if( resp.data.success === false ) {
+			return 'Error';
+		}
+		
+		for( i ; i < resp.data.length; i++ ) {
+			var select = document.getElementById( 'translations-'+resp.data[i].blog_id );
+			
+			if( select === null ) {
+				continue;
+			}
+			
+			/// Create dom object option and add it to his select
+			var opt = document.createElement("option");
+			opt.value = resp.data[i].object_id;
+			opt.innerText = resp.data[i].title;
+			opt.selected = true;
+			select.appendChild( opt );
+			
+			// Refresh chosen
+			jQuery( '.bea_chosen_select' ).trigger("liszt:updated");
+			
+		}
 	}
 };
 

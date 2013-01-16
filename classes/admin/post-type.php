@@ -92,14 +92,17 @@ class Bea_MM_Admin_PostType {
 				$output .= '</div>';
 			}
 		}
-
+		
 		// Vars for the button
-		$nonce = "data-nonce='".wp_create_nonce( 'bea-mm-all-draft-'.$object->post_type.'-'.$translation_factory -> get_blog_id().'-'.$object->ID, 'bea-mm-all-draft-'.$object->post_type.'-'.$translation_factory -> get_blog_id().'-'.$object->ID )."'";
+		$nonce = "data-nonce='".wp_create_nonce( 'bea-mm-all-draft', 'bea-mm-all-draft-'.$object->post_type.'-'.$translation_factory -> get_blog_id().'-'.$object->ID )."'";
 		$blog_id = 'data-blog_id="'.get_current_blog_id().'"';
 		$post_type = 'data-post_type="'.$object->post_type.'"';;
 		
 		// General draft generation
-		$output .= '<div id="bea_mm_create_all_drafts" ><button '.$post_type.' '.$blog_id.' '.$nonce.' class="button button-primary button-large bea_mm_create_all_draft" >'.__( 'Create draft in all available languages' ).'</button></div>';
+		$output .= '<div id="bea_mm_create_all_drafts" >
+				<button '.$post_type.' '.$blog_id.' '.$nonce.' class="button button-primary button-large bea_mm_create_all_draft" >'.__( 'Create draft in all available languages' ).'</button>
+				<p class="messages" ></p>
+			</div>';
 		
 		echo $output;
 	}
@@ -160,7 +163,7 @@ class Bea_MM_Admin_PostType {
 		$object_id = isset( $_POST['id'] ) && (int)$_POST['id'] > 0 ? (int)$_POST['id'] : 0 ;
 		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '' ;
 		
-		if( !wp_verify_nonce( $nonce, 'bea-mm-all-draft-'.$post_type.'-'.$blog_id.'-'.$object_id ) ) {
+		if( !wp_verify_nonce( $nonce, 'bea-mm-all-draft' ) ) {
 			wp_send_json_error( __( 'Security error', 'bea_mm' ) );
 		}
 		
@@ -253,7 +256,7 @@ class Bea_MM_Admin_PostType {
 		}
 		
 		// Add current object/blog
-		$translations_to_load[] = array( 'blog_id' => get_current_blog_id(), 'object_id' => $object->ID );
+		$translations_to_load[] = array( 'blog_id' => get_current_blog_id(), 'object_id' => $object->ID, 'title' => $object->post_title );
 		
 		// Init new factory and set group !
 		$connection_factory = new Bea_MM_Connection_Factory();
