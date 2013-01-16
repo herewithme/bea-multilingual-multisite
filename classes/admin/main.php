@@ -48,7 +48,9 @@ class Bea_MM_Admin {
 		
 		// Add vars for the main admin script
 		wp_localize_script( 'bea-mm-admin-scripts' , 'bea_mm_vars', array(
-			'spinner' => sprintf( '<img class="bea_mm_spinner" src="%s" />', admin_url( '/images/wpspin_light-2x.gif' ) )
+			'spinner' => sprintf( '<img class="bea_mm_spinner" src="%s" />', admin_url( '/images/wpspin_light-2x.gif' ) ),
+			'draftSuccess' => __( '<%= number %> draft created', 'bea-mm' ),
+			'draftFailed' =>  __( 'No draft created', 'bea-mm' ),
 		) );
 		
 		// Register the styles
