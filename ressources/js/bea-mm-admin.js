@@ -37,7 +37,7 @@ fr.bea.mm = {
 		self.template_edit = document.getElementById( 'bea-mm-tpl-edit' ).text;
 		self.bea_mm = jQuery( "#bea-mm" );
 		self.messages = jQuery( document.getElementById( 'bea_mm_messages' ) );
-		
+
 		// All draft generator
 		self.initDraftGenerator( '#bea_mm_create_all_drafts' );
 		// Unlink
@@ -73,6 +73,12 @@ fr.bea.mm = {
 						fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? _.template( bea_mm_vars.draftSuccess, {
 							number : resp.data.length
 						} ) : bea_mm_vars.draftFailed );
+
+						if( resp.success === true ) {
+							_.each( resp.data, function( value ) {
+								fr.bea.mm.makeEditLine( value.blog_id, value );
+							} );
+						}
 					}
 				} );
 			}
@@ -96,8 +102,8 @@ fr.bea.mm = {
 		translation.object_id = translation.id;
 		translation.id = fr.bea.mm.post_id;
 		translation.action = 'bea_mm_link';
-		
-		if( isNaN ( parseInt( translation.object_id, 10 ) ) ) {
+
+		if( _.isNaN( parseInt( translation.object_id, 10 ) ) ) {
 			fr.bea.mm.setMessage( 'failure', bea_mm_vars.selectSomething );
 			return false;
 		}
@@ -112,7 +118,7 @@ fr.bea.mm = {
 			},
 			success : function( resp ) {
 				fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? bea_mm_vars.linkSuccess : bea_mm_vars.linkFailed );
-				bu.find( '.controls' ).html( _.template( fr.bea.mm.template_edit, resp.data ) );
+				fr.bea.mm.makeEditLine( translation.blog_id, resp.data );
 				input.val( translation.object_id );
 			}
 		} );
@@ -131,10 +137,28 @@ fr.bea.mm = {
 			},
 			success : function( resp ) {
 				fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? bea_mm_vars.unlinkSuccess : bea_mm_vars.unlinkFailed );
-				bu.find( '.controls' ).html( _.template( fr.bea.mm.template_add, resp.data ) );
+				fr.bea.mm.makeDefaultLine( translation.blog_id, translation );
 				bu.find( 'input' ).val( 0 );
 			}
 		} );
+	},
+	makeEditLine : function( blog_id, data ) {
+		if( typeof data !== 'object' || _.isNaN( parseInt( blog_id, 10 ) ) ) {
+			return false;
+		}
+
+		var but = jQuery( '#bea-mm-translation-' + blog_id );
+		but.find( '.controls' ).html( _.template( fr.bea.mm.template_edit, data ) );
+		return true;
+	},
+	makeDefaultLine : function( blog_id, data ) {
+		if( typeof data !== 'object' || _.isNaN( parseInt( blog_id, 10 ) ) ) {
+			return false;
+		}
+
+		var but = jQuery( '#bea-mm-translation-' + blog_id );
+		but.find( '.controls' ).html( _.template( fr.bea.mm.template_add, data ) );
+		return true;
 	},
 	setMessage : function( status, message ) {
 		fr.bea.mm.messages.removeClass( 'hidden failure success alert' ).addClass( status ).html( message );
