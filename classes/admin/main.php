@@ -54,6 +54,10 @@ class Bea_MM_Admin {
 			'linkSuccess' =>  __( 'Relation created', 'bea-mm' ),
 			'unlinkSuccess' =>  __( 'Relation removed', 'bea-mm' ),
 			'unlinkFailed' =>  __( 'Error during the relation removal', 'bea-mm' ),
+			'selectSomething' =>  __( 'Please select an object on the list', 'bea-mm' ),
+			'allDraftWaiting' =>  __( 'Draft are on their way... Please wait', 'bea-mm' ),
+			'linkWainting' =>  __( 'Relation creation... Please wait', 'bea-mm' ),
+			'unLinkWainting' =>  __( 'Relation deletion... Please wait', 'bea-mm' ),
 		) );
 		
 		wp_localize_script( 'bea-mm-admin-link' , 'bea_mm_linkL10n', array(
