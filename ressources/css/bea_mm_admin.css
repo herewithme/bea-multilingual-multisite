@@ -12,6 +12,10 @@
 #bea-mm.postbox .inside .alert-message {
 	padding: 7px 10px;
 	border-bottom: 1px solid #DFDFDF;
+	-webkit-transition: background .2s ease-in;
+	-moz-transition: background .2s ease-in;
+	-o-transition: background .2s ease-in;
+	transition: background .2s ease-in;
 }
 #bea-mm.postbox .inside .alert-message.success {
 	background: #bee056;

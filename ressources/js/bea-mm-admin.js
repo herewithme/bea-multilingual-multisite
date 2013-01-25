@@ -18,7 +18,6 @@ if( !fr.bea.mm ) {
 }
 
 fr.bea.mm = {
-	spinner : '',
 	messages : null,
 	bea_mm : null,
 	post_id : 0,
@@ -38,8 +37,7 @@ fr.bea.mm = {
 		self.template_edit = document.getElementById( 'bea-mm-tpl-edit' ).text;
 		self.bea_mm = jQuery( "#bea-mm" );
 		self.messages = jQuery( document.getElementById( 'bea_mm_messages' ) );
-		// Make an object
-		self.spinner = jQuery( bea_mm_vars.spinner );
+		
 		// All draft generator
 		self.initDraftGenerator( '#bea_mm_create_all_drafts' );
 		// Unlink
@@ -68,12 +66,10 @@ fr.bea.mm = {
 					},
 					beforeSend : function( ) {
 						el.addClass( 'ajaxing' );
-						bu.before( fr.bea.mm.spinner.show( ) );
+						fr.bea.mm.setMessage( 'alert', bea_mm_vars.allDraftWaiting );
 					},
 					success : function( resp ) {
 						el.removeClass( 'ajaxing' );
-						fr.bea.mm.spinner.hide( );
-
 						fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? _.template( bea_mm_vars.draftSuccess, {
 							number : resp.data.length
 						} ) : bea_mm_vars.draftFailed );
@@ -112,10 +108,9 @@ fr.bea.mm = {
 			dataType : 'json',
 			data : translation,
 			beforeSend : function( ) {
-				bu.before( fr.bea.mm.spinner.show( ) );
+				fr.bea.mm.setMessage( 'alert', bea_mm_vars.linkWainting );
 			},
 			success : function( resp ) {
-				fr.bea.mm.spinner.hide( );
 				fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? bea_mm_vars.linkSuccess : bea_mm_vars.linkFailed );
 				bu.find( '.controls' ).html( _.template( fr.bea.mm.template_edit, resp.data ) );
 				input.val( translation.object_id );
@@ -132,10 +127,9 @@ fr.bea.mm = {
 			dataType : 'json',
 			data : translation,
 			beforeSend : function( ) {
-				bu.before( fr.bea.mm.spinner.show( ) );
+				fr.bea.mm.setMessage( 'alert', bea_mm_vars.unlinkWainting );
 			},
 			success : function( resp ) {
-				fr.bea.mm.spinner.hide( );
 				fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? bea_mm_vars.linkSuccess : bea_mm_vars.linkFailed );
 				bu.find( '.controls' ).html( _.template( fr.bea.mm.template_add, resp.data ) );
 				bu.find( 'input' ).val( 0 );
@@ -143,7 +137,7 @@ fr.bea.mm = {
 		} );
 	},
 	setMessage : function( status, message ) {
-		fr.bea.mm.messages.removeClass( 'failure success alert' ).addClass( status ).html( message );
+		fr.bea.mm.messages.removeClass( 'hidden failure success alert' ).addClass( status ).html( message );
 	}
 };
 

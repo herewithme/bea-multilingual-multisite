@@ -13,7 +13,7 @@ var bea_mm_link;
 
 		init : function( ) {
 			var d = jQuery( '#bea-mm' );
-			d.on( 'click', '.add_relation', function( e ) {
+			d.on( 'click', '.add_relation, .edit-relation', function( e ) {
 				e.preventDefault( );
 				var el = jQuery( this ).closest( 'li' );
 				inputs.post_type = el.data( 'post_type' );
