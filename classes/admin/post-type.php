@@ -12,6 +12,8 @@ class Bea_MM_Admin_PostType {
 		
 		add_action( 'wp_ajax_'.'bea_mm_search', array( __CLASS__, 'a_search' ), 10);
 		add_action( 'wp_ajax_'.'bea_mm_auto_draft', array( __CLASS__, 'a_create_drafts' ), 10);
+		add_action( 'wp_ajax_'.'bea_mm_link', array( __CLASS__, 'a_link' ), 10);
+		add_action( 'wp_ajax_'.'bea_mm_unlink', array( __CLASS__, 'a_unlink' ), 10);
 	}
 
 	/**
@@ -42,67 +44,10 @@ class Bea_MM_Admin_PostType {
 		
 		// Loop on translation
 		$translation_factory = new Bea_MM_Translation_Factory('post_type', array('post_id' => $object->ID),  get_current_blog_id());
-		if ( $translation_factory -> have_translations() ) {
-			while ( $translation_factory -> have_translations() ) {
-				$translation_factory -> the_translation();
-				
-				// Skip current translation
-				if ( $translation_factory->is_current_translation() ) {
-					continue;
-				}
-
-				// Get translated id
-				$current_id = $translation_factory->translation_exists() ? $translation_factory -> get_translation_id() : 0 ;
-				
-				$output .= '<div class="translation-block lang-'.esc_attr( $translation_factory->get_language_code() ).'" >';
-					$output .= '<label for="'.'translations-' . $translation_factory -> get_blog_id().'">'.$translation_factory -> get_language_label( true ).'</label>';
-					switch_to_blog( $translation_factory -> get_blog_id() );
-						$select = Bea_MM_Plugin::dropdown_post_type_objects( 
-							array(
-								'post_type' => $object->post_type, 
-								'sort_column' => 'menu_order, post_title',
-								'post__in' => $current_id > 0 ? array( $current_id ): array(),
-								'post_status' => 'any'
-							), 
-							array( 
-								'attrs' => array(
-									'data-blog_id' => $translation_factory -> get_blog_id(),
-									'data-post_type' => $object->post_type,
-									'data-nonce' => wp_create_nonce( 
-										'bea-mm-search-'.$object->post_type.'-'.$translation_factory -> get_blog_id(),
-										'bea-mm-search-'.$object->post_type.'-'.$translation_factory -> get_blog_id() )
-								),
-								'class' => 'widefat bea_chosen_select',
-								'echo' => 0, 
-								'selected' => $current_id, 
-								'name' => 'translations[' . $translation_factory -> get_blog_id() . ']', 
-								'show_option_none' => ' ', 
-								'option_none_value' => 0, 
-								'id' => 'translations-' . $translation_factory -> get_blog_id() 
-								)
-							) ;
-						$output .= empty( $select ) ? '<p>'.__( 'No more elements to associate with for this language', 'bea-mm' ).'</p>' : $select ;
-						
-						// If nothing selected, then add ability to generate draft in this language 
-						if( empty( $current_id ) ) {
-							$output .= '<label for="bea_mm_create-draft-' . $translation_factory -> get_blog_id().'"><input type="checkbox" id="bea_mm_create-draft-' . $translation_factory -> get_blog_id().'" name="bea_mm_create_draft[]" value="blog-' . $translation_factory -> get_blog_id().'" />'.sprintf( __( 'Create draft in %s', 'bea-mm' ), $translation_factory -> get_language_label( true ) ).'</label>';
-						}
-
-					restore_current_blog();
-				$output .= '</div>';
-			}
+		
+		if( is_file( BEA_MM_DIR.'/classes/admin/views/admin-post_type.php' ) ) {
+			include(  BEA_MM_DIR.'/classes/admin/views/admin-post_type.php' );
 		}
-		
-		// Vars for the button
-		$nonce = "data-nonce='".wp_create_nonce( 'bea-mm-all-draft', 'bea-mm-all-draft-'.$object->post_type.'-'.$translation_factory -> get_blog_id().'-'.$object->ID )."'";
-		$blog_id = 'data-blog_id="'.get_current_blog_id().'"';
-		$post_type = 'data-post_type="'.$object->post_type.'"';;
-		
-		// General draft generation
-		$output .= '<div id="bea_mm_create_all_drafts" >
-				<button '.$post_type.' '.$blog_id.' '.$nonce.' class="button button-primary button-large bea_mm_create_all_draft" >'.__( 'Create draft in all available languages' ).'</button>
-				<p class="messages" ></p>
-			</div>';
 		
 		echo $output;
 	}
@@ -123,9 +68,9 @@ class Bea_MM_Admin_PostType {
 		$post_type = isset( $_POST['post_type'] ) && post_type_exists( $_POST['post_type'] ) ? $_POST['post_type'] : '' ;
 		$blog_id = isset( $_POST['blog_id'] ) && (int)$_POST['blog_id'] > 0 ? (int)$_POST['blog_id'] : 0 ;
 		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '' ;
-		$search = !isset( $_POST['s'] ) || empty( $_POST['s'] ) ? '' : $_POST['s'];
+		$search = !isset( $_POST['search'] ) || empty( $_POST['search'] ) ? '' : $_POST['search'];
 		
-		if( !wp_verify_nonce( $nonce, 'bea-mm-search-'.$post_type.'-'.$blog_id ) || empty( $search ) ) {
+		if( !wp_verify_nonce( $nonce, 'bea-mm-search-'.$post_type.'-'.$blog_id ) ) {
 			wp_send_json_error();
 		}
 		
@@ -144,12 +89,14 @@ class Bea_MM_Admin_PostType {
 			wp_send_json_error();
 		}
 		
+		$ptypes = get_post_types( array( 'public' => true ), 'objects' );
 		$out = array();
 		while( $query->have_posts() ) {
 			$query->the_post();
 			$out[] = array(
-				'value' => get_the_ID(),
-				'text' => get_the_title()
+				'ID' => get_the_ID(),
+				'title' => get_the_title(),
+				'info' => isset( $ptypes[get_post_type()] ) ? $ptypes[get_post_type()]->labels->singular_name : ''
 			);
 		}
 		
@@ -173,6 +120,76 @@ class Bea_MM_Admin_PostType {
 		}
 		
 		wp_send_json_success( self::create_object_drafts( $obj ) );
+	}
+	
+	public static function a_link() {
+		$blog_id = isset( $_POST['blog_id'] ) && (int)$_POST['blog_id'] > 0 ? (int)$_POST['blog_id'] : 0 ;
+		$post_type = isset( $_POST['post_type'] ) && post_type_exists( $_POST['post_type'] ) ? $_POST['post_type'] : '' ;
+		$object_id = isset( $_POST['object_id'] ) && (int)$_POST['object_id'] > 0 ? (int)$_POST['object_id'] : 0 ;
+		$id = isset( $_POST['id'] ) && (int)$_POST['id'] > 0 ? (int)$_POST['id'] : 0 ;
+		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '' ;
+		$translations_to_load = array();
+		
+		if( !wp_verify_nonce( $nonce, 'bea-mm-link-'.$post_type.'-'.$blog_id ) ) {
+			wp_send_json_error( __( 'Security error', 'bea_mm' ) );
+		}
+		
+		// Init current factory and remove group
+		$connection_factory = new Bea_MM_Connection_Factory();
+		$connection_factory->load_by_object( 'post_type', get_current_blog_id(), $id);
+		$connection_factory->ungroup();
+		
+		// Convert array format for class usage
+		$translations_to_load[] = array( 'blog_id' => $blog_id, 'object_id' => $object_id );
+		
+		// Add current object/blog
+		$translations_to_load[] = array( 'blog_id' => get_current_blog_id(), 'object_id' => $id );
+		
+		// Init new factory and set group !
+		$connection_factory = new Bea_MM_Connection_Factory();
+		$connection_factory->load( 'post_type', $translations_to_load );
+		
+		// Group if more than one translations !
+		if ( count($translations_to_load) > 1 ) {
+			$connection_factory->group();
+		}
+		
+		wp_send_json_success( array( 'title' => get_the_title( $object_id ), 'edit_link' => get_edit_post_link( $object_id ) ) );
+	}
+
+	public static function a_unlink() {
+		$blog_id = isset( $_POST['blog_id'] ) && (int)$_POST['blog_id'] > 0 ? (int)$_POST['blog_id'] : 0 ;
+		$post_type = isset( $_POST['post_type'] ) && post_type_exists( $_POST['post_type'] ) ? $_POST['post_type'] : '' ;
+		$object_id = isset( $_POST['object_id'] ) && (int)$_POST['object_id'] > 0 ? (int)$_POST['object_id'] : 0 ;
+		$id = isset( $_POST['id'] ) && (int)$_POST['id'] > 0 ? (int)$_POST['id'] : 0 ;
+		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '' ;
+		$translations_to_load = array();
+		
+		if( !wp_verify_nonce( $nonce, 'bea-mm-unlink-'.$post_type.'-'.$blog_id ) ) {
+			wp_send_json_error( __( 'Security error', 'bea_mm' ) );
+		}
+		
+		// Init current factory and remove group
+		$connection_factory = new Bea_MM_Connection_Factory();
+		$connection_factory->load_by_object( 'post_type', get_current_blog_id(), $id);
+		$connection_factory->ungroup();
+		
+		// Convert array format for class usage
+		$translations_to_load[] = array( 'blog_id' => $blog_id, 'object_id' => 0 );
+		
+		// Add current object/blog
+		$translations_to_load[] = array( 'blog_id' => get_current_blog_id(), 'object_id' => $id );
+		
+		// Init new factory and set group !
+		$connection_factory = new Bea_MM_Connection_Factory();
+		$connection_factory->load( 'post_type', $translations_to_load );
+		
+		// Group if more than one translations !
+		if ( count($translations_to_load) > 1 ) {
+			$connection_factory->group();
+		}
+		
+		wp_send_json_success();
 	}
 
 	/**
@@ -218,8 +235,7 @@ class Bea_MM_Admin_PostType {
 
 	public static function add_ressources() {
 		wp_enqueue_script( 'bea-mm-admin-scripts' );
-		
-		wp_enqueue_style( 'chosen' );
+		wp_enqueue_script( 'bea-mm-admin-link' );
 		wp_enqueue_style( 'bea-mm-admin' );
 	}
 	
