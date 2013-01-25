@@ -127,7 +127,7 @@ fr.bea.mm = {
 			dataType : 'json',
 			data : translation,
 			beforeSend : function( ) {
-				fr.bea.mm.setMessage( 'alert', bea_mm_vars.unlinkWainting );
+				fr.bea.mm.setMessage( 'alert', bea_mm_vars.unlinkWaiting );
 			},
 			success : function( resp ) {
 				fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? bea_mm_vars.unlinkSuccess : bea_mm_vars.unlinkFailed );
