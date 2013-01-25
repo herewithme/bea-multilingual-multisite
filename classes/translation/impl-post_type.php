@@ -45,9 +45,9 @@ class Bea_MM_Translation_View_PostType implements Bea_MM_Translation_View {
 	public function get_permalink( ) {
 		if ( $this->connection == NULL )
 			return NULL;
-
+		
 		switch_to_blog( $this->obj->blog_id );
-		$return_value = get_permalink( $this->connection->get_id( ) );
+		$return_value = get_permalink( $this->get_id( ) );
 		restore_current_blog( );
 
 		return $return_value;
@@ -58,7 +58,7 @@ class Bea_MM_Translation_View_PostType implements Bea_MM_Translation_View {
 			return NULL;
 
 		switch_to_blog( $this->obj->blog_id );
-		$return_value = get_permalink( $this->connection->get_id( ) );
+		$return_value = get_permalink( $this->get_id( ) );
 		restore_current_blog( );
 
 		return $return_value;
