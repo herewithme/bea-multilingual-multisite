@@ -237,8 +237,6 @@ class Bea_MM_Admin_PostType {
 		if ( count($translations_to_load) > 1 ) {
 			$connection_factory->group();
 		}
-		
-		
 	}
 	
 	/**
@@ -254,8 +252,14 @@ class Bea_MM_Admin_PostType {
 			return array();
 		}
 		
+		// Init translations
 		$translations_to_load = array();
 		$translation_factory = new Bea_MM_Translation_Factory( 'post_type', array( 'post_id' => $object->ID ),  get_current_blog_id() );
+		
+		// Init new factory and set group !
+		$connection_factory = new Bea_MM_Connection_Factory();
+		$connection_factory->load_by_object(  'post_type', get_current_blog_id(), $object->ID );
+		
 		if ( $translation_factory -> have_translations() ) {
 			while ( $translation_factory -> have_translations() ) {
 				$translation_factory -> the_translation();
@@ -268,15 +272,21 @@ class Bea_MM_Admin_PostType {
 				$client_object_id = self::create_object_draft( $object, $translation_factory -> get_blog_id() );
 				
 				if( (int)$client_object_id > 0 ) {
-					$translations_to_load[] = array( 'blog_id' => $translation_factory -> get_blog_id(), 'object_id' => $client_object_id );
+					$connection_factory->append( 'post_type', array( 'blog_id' => $translation_factory -> get_blog_id(), 'object_id' => $client_object_id ) );
+					switch_to_blog( $translation_factory -> get_blog_id() );
+					$edit_link = get_edit_post_link( $client_object_id );
+					restore_current_blog();
+					$translations_to_load[] = array( 'blog_id' => $translation_factory -> get_blog_id(), 'title' => get_the_title( $object->ID ), 'edit_link' => $edit_link ) ;
 				}
 			}
 		}
 		
-		// Add current object/blog
-		$translations_to_load[] = array( 'blog_id' => get_current_blog_id(), 'object_id' => $object->ID, 'title' => $object->post_title );
+		// Return array empty if no translations
+		if( empty( $translations_to_load ) ) {
+			return array();
+		}
 		
-		self::loadTranslations( $translations_to_load );
+		$connection_factory->group();
 		
 		return $translations_to_load;
 	}
