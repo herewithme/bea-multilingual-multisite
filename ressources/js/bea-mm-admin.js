@@ -130,7 +130,7 @@ fr.bea.mm = {
 				fr.bea.mm.setMessage( 'alert', bea_mm_vars.unlinkWainting );
 			},
 			success : function( resp ) {
-				fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? bea_mm_vars.linkSuccess : bea_mm_vars.linkFailed );
+				fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? bea_mm_vars.unlinkSuccess : bea_mm_vars.unlinkFailed );
 				bu.find( '.controls' ).html( _.template( fr.bea.mm.template_add, resp.data ) );
 				bu.find( 'input' ).val( 0 );
 			}
