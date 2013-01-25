@@ -22,7 +22,6 @@ var bea_mm_link;
 				// Nonce
 				inputs.nonce = el.data( 'nonce' );
 				inputs.nonce_link = el.data( 'nonce-link' );
-
 				bea_mm_link.open( );
 			} );
 
@@ -65,7 +64,6 @@ var bea_mm_link;
 					modal : true,
 					dialogClass : 'wp-dialog',
 					zIndex : 300000
-
 				} );
 			}
 
@@ -119,6 +117,7 @@ var bea_mm_link;
 		setDefaultValues : function( ) {
 			// Update save prompt.
 			inputs.submit.val( bea_mm_linkL10n.save );
+			inputs.search.val( '' );
 		},
 
 		searchInternalLinks : function( ) {
@@ -242,6 +241,7 @@ var bea_mm_link;
 		refresh : function( ) {
 			this.deselect( );
 			this.visible = this.element.is( ':visible' );
+			this.ul.empty();
 		},
 		show : function( ) {
 			if( !this.visible ) {

@@ -74,7 +74,7 @@ fr.bea.mm = {
 						el.removeClass( 'ajaxing' );
 						fr.bea.mm.spinner.hide( );
 
-						fr.bea.mm.setMessage( resp.success === true ? "success" : "error", resp.success === true ? _.template( bea_mm_vars.draftSuccess, {
+						fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? _.template( bea_mm_vars.draftSuccess, {
 							number : resp.data.length
 						} ) : bea_mm_vars.draftFailed );
 					}
@@ -100,6 +100,11 @@ fr.bea.mm = {
 		translation.object_id = translation.id;
 		translation.id = fr.bea.mm.post_id;
 		translation.action = 'bea_mm_link';
+		
+		if( isNaN ( parseInt( translation.object_id, 10 ) ) ) {
+			fr.bea.mm.setMessage( 'failure', bea_mm_vars.selectSomething );
+			return false;
+		}
 
 		jQuery.ajax( {
 			type : 'POST',
@@ -111,7 +116,7 @@ fr.bea.mm = {
 			},
 			success : function( resp ) {
 				fr.bea.mm.spinner.hide( );
-				fr.bea.mm.setMessage( resp.success === true ? "success" : "error", resp.success === true ? bea_mm_vars.linkSuccess : bea_mm_vars.linkFailed );
+				fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? bea_mm_vars.linkSuccess : bea_mm_vars.linkFailed );
 				bu.find( '.controls' ).html( _.template( fr.bea.mm.template_edit, resp.data ) );
 				input.val( translation.object_id );
 			}
@@ -131,14 +136,14 @@ fr.bea.mm = {
 			},
 			success : function( resp ) {
 				fr.bea.mm.spinner.hide( );
-				fr.bea.mm.setMessage( resp.success === true ? "success" : "error", resp.success === true ? bea_mm_vars.linkSuccess : bea_mm_vars.linkFailed );
+				fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? bea_mm_vars.linkSuccess : bea_mm_vars.linkFailed );
 				bu.find( '.controls' ).html( _.template( fr.bea.mm.template_add, resp.data ) );
 				bu.find( 'input' ).val( 0 );
 			}
 		} );
 	},
 	setMessage : function( status, message ) {
-		fr.bea.mm.messages.removeClass( 'error success' ).addClass( status ).html( message );
+		fr.bea.mm.messages.removeClass( 'failure success alert' ).addClass( status ).html( message );
 	}
 };
 
