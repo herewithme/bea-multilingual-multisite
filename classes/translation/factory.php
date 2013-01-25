@@ -95,7 +95,7 @@ class Bea_MM_Translation_Factory {
 	 * @return [type]
 	 */
 	private function _setupDataFromQuery( ) {
-		if ( is_home( ) && is_front_page( ) ) {
+		if ( is_home( ) || is_front_page( ) ) {
 			$this->view = 'home';
 			$this->view_args = array( );
 		} elseif ( is_day( ) ) {
