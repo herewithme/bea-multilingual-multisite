@@ -19,64 +19,42 @@ if( !fr.bea.mm ) {
 
 fr.bea.mm = {
 	spinner : '',
-	init : function() {
-		var _s = this;
-		
+	messages : null,
+	bea_mm : null,
+	post_id : 0,
+	template_add : '',
+	template_edit : '',
+	init : function( ) {
+		var self = this;
+
 		// Check vars given
 		if( typeof bea_mm_vars !== 'object' ) {
 			throw new Error( 'bea_mm_vars have to be declared for this script run' );
 		}
-		
+
+		// Init vars
+		self.post_id = document.getElementById( 'post_ID' ).value;
+		self.template_add = document.getElementById( 'bea-mm-tpl-add' ).text;
+		self.template_edit = document.getElementById( 'bea-mm-tpl-edit' ).text;
+		self.bea_mm = jQuery( "#bea-mm" );
+		self.messages = jQuery( document.getElementById( 'bea_mm_messages' ) );
 		// Make an object
-		_s.spinner = jQuery( bea_mm_vars.spinner );
-		
-		// Chosen init
-		_s.initAjaxChosen( '.bea_chosen_select' );
-		
+		self.spinner = jQuery( bea_mm_vars.spinner );
 		// All draft generator
-		_s.initDraftGenerator( '#bea_mm_create_all_drafts' );
-	},
-	initAjaxChosen : function( cl ) {
-		var el = jQuery( cl ),
-		nonce = el.data( 'nonce' ),
-		post_type = el.data( 'post_type' ),
-		blog_id = el.data( 'blog_id' );
-		
-		el.ajaxChosen( {
-			type : 'POST',
-			url : ajaxurl,
-			dataType : 'json',
-			jsonTermKey : 's',
-			minTermLength : 2,
-			data : {
-				action : 'bea_mm_search',
-				nonce : nonce,
-				post_type : post_type,
-				blog_id : blog_id
-			}
-		}, function( data ) {
-			if( data.success === false || typeof data.data !== "object" ) {
-				return [];
-			}
-			
-			return data.data;
-		}, {
-			allow_single_deselect: true
-		} );
+		self.initDraftGenerator( '#bea_mm_create_all_drafts' );
+		// Unlink
+		self.initUnlink( '.del-item' );
 	},
 	initDraftGenerator : function( sl ) {
-		var el = jQuery( sl ), _s = this;
-		
+		var el = jQuery( sl ), self = this;
+
 		// Handle the generator draft
 		el.on( 'click', 'button', function( e ) {
-			e.preventDefault();
-			
+			e.preventDefault( );
+
 			if( !el.hasClass( 'ajaxing' ) ) {
-				var bu = jQuery( this ),
-					nonce = bu.data( 'nonce' ),
-					post_type = bu.data( 'post_type' ),
-					blog_id = bu.data( 'blog_id' );
-				
+				var bu = jQuery( this ), nonce = bu.data( 'nonce' ), post_type = bu.data( 'post_type' ), blog_id = bu.data( 'blog_id' );
+
 				jQuery.ajax( {
 					type : 'POST',
 					url : ajaxurl,
@@ -86,54 +64,84 @@ fr.bea.mm = {
 						nonce : nonce,
 						post_type : post_type,
 						blog_id : blog_id,
-						id : document.getElementById( 'post_ID' ).value
+						id : fr.bea.mm.post_id
 					},
-					beforeSend : function() {
+					beforeSend : function( ) {
 						el.addClass( 'ajaxing' );
-						bu.before( fr.bea.mm.spinner.show() );
+						bu.before( fr.bea.mm.spinner.show( ) );
 					},
 					success : function( resp ) {
 						el.removeClass( 'ajaxing' );
-						fr.bea.mm.spinner.hide();
-						
-						_s.draftSelect( resp )
-						console.log( { number : resp.data.length } );
-						el.find( '.messages' ).removeClass('error success').addClass( resp.success === true ? "success" : "error" ).html( resp.success === true ? _.template( bea_mm_vars.draftSuccess, { number : resp.data.length } ) : bea_mm_vars.draftFailed );
+						fr.bea.mm.spinner.hide( );
+
+						fr.bea.mm.setMessage( resp.success === true ? "success" : "error", resp.success === true ? _.template( bea_mm_vars.draftSuccess, {
+							number : resp.data.length
+						} ) : bea_mm_vars.draftFailed );
 					}
 				} );
 			}
 		} );
 	},
-	draftSelect : function( resp ) {
-		var total = resp.data.length,
-		i =0,
-		tmpl = "<option value='<%= object_id %>'><%= title %></option>";
-		
-		if( resp.data.success === false ) {
-			return 'Error';
-		}
-		
-		for( i ; i < resp.data.length; i++ ) {
-			var select = document.getElementById( 'translations-'+resp.data[i].blog_id );
-			
-			if( select === null ) {
-				continue;
+	initUnlink : function( sel ) {
+		fr.bea.mm.bea_mm.on( 'click', sel, function( e ) {
+			e.preventDefault( );
+			var p = jQuery( this ).closest( 'li' ), obj = {
+				nonce : p.data( 'nonce-unlink' ),
+				id : fr.bea.mm.post_id,
+				object_id : p.find( 'input' ).val( ),
+				blog_id : p.data( 'blog_id' ),
+				post_type : p.data( 'post_type' )
+			};
+			fr.bea.mm.removeRelation( obj, p );
+		} );
+	},
+	addRelation : function( translation ) {
+		var bu = jQuery( '#bea-mm-translation-' + translation.blog_id ), input = bu.find( 'input' );
+		translation.object_id = translation.id;
+		translation.id = fr.bea.mm.post_id;
+		translation.action = 'bea_mm_link';
+
+		jQuery.ajax( {
+			type : 'POST',
+			url : ajaxurl,
+			dataType : 'json',
+			data : translation,
+			beforeSend : function( ) {
+				bu.before( fr.bea.mm.spinner.show( ) );
+			},
+			success : function( resp ) {
+				fr.bea.mm.spinner.hide( );
+				fr.bea.mm.setMessage( resp.success === true ? "success" : "error", resp.success === true ? bea_mm_vars.linkSuccess : bea_mm_vars.linkFailed );
+				bu.find( '.controls' ).html( _.template( fr.bea.mm.template_edit, resp.data ) );
+				input.val( translation.object_id );
 			}
-			
-			/// Create dom object option and add it to his select
-			var opt = document.createElement("option");
-			opt.value = resp.data[i].object_id;
-			opt.innerText = resp.data[i].title;
-			opt.selected = true;
-			select.appendChild( opt );
-			
-			// Refresh chosen
-			jQuery( '.bea_chosen_select' ).trigger("liszt:updated");
-			
-		}
+		} );
+	},
+	removeRelation : function( translation ) {
+		var bu = jQuery( '#bea-mm-translation-' + translation.blog_id );
+		translation.action = 'bea_mm_unlink';
+
+		jQuery.ajax( {
+			type : 'POST',
+			url : ajaxurl,
+			dataType : 'json',
+			data : translation,
+			beforeSend : function( ) {
+				bu.before( fr.bea.mm.spinner.show( ) );
+			},
+			success : function( resp ) {
+				fr.bea.mm.spinner.hide( );
+				fr.bea.mm.setMessage( resp.success === true ? "success" : "error", resp.success === true ? bea_mm_vars.linkSuccess : bea_mm_vars.linkFailed );
+				bu.find( '.controls' ).html( _.template( fr.bea.mm.template_add, resp.data ) );
+				bu.find( 'input' ).val( 0 );
+			}
+		} );
+	},
+	setMessage : function( status, message ) {
+		fr.bea.mm.messages.removeClass( 'error success' ).addClass( status ).html( message );
 	}
 };
 
-jQuery( function() {
-	fr.bea.mm.init();
-});
+jQuery( function( ) {
+	fr.bea.mm.init( );
+} );
