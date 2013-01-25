@@ -10,10 +10,21 @@ class Bea_MM_Admin_PostType {
 		
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'add_ressources' ), 10 );
 		
+		// Ajax actions
 		add_action( 'wp_ajax_'.'bea_mm_search', array( __CLASS__, 'a_search' ), 10);
 		add_action( 'wp_ajax_'.'bea_mm_auto_draft', array( __CLASS__, 'a_create_drafts' ), 10);
 		add_action( 'wp_ajax_'.'bea_mm_link', array( __CLASS__, 'a_link' ), 10);
 		add_action( 'wp_ajax_'.'bea_mm_unlink', array( __CLASS__, 'a_unlink' ), 10);
+	}
+
+	public static function add_ressources( $hook ) {
+		// This blog have group ?
+		if ( Bea_MM_GroupSites_Factory::get_current_group( ) == false || $hook !== 'post.php' ) {
+			return false;
+		}
+		wp_enqueue_script( 'bea-mm-admin-scripts' );
+		wp_enqueue_script( 'bea-mm-admin-link' );
+		wp_enqueue_style( 'bea-mm-admin' );
 	}
 
 	/**
@@ -21,8 +32,9 @@ class Bea_MM_Admin_PostType {
 	 */
 	public static function add_meta_boxes( ) {
 		// This blog have group ?
-		if ( Bea_MM_GroupSites_Factory::get_current_group( ) == false )
+		if ( Bea_MM_GroupSites_Factory::get_current_group( ) == false ) {
 			return false;
+		}
 
 		foreach ( get_post_types(array('show_ui' => true), 'names') as $cpt ) {
 			add_meta_box( 'bea-mm', __( 'Translations', 'bea-mm' ), array( __CLASS__, 'metabox' ), $cpt, 'side', 'high', array('post_type' => $cpt) );
@@ -69,6 +81,7 @@ class Bea_MM_Admin_PostType {
 		$blog_id = isset( $_POST['blog_id'] ) && (int)$_POST['blog_id'] > 0 ? (int)$_POST['blog_id'] : 0 ;
 		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '' ;
 		$search = !isset( $_POST['search'] ) || empty( $_POST['search'] ) ? '' : $_POST['search'];
+		$page = !isset( $_POST['page'] ) || empty( $_POST['page'] ) ? 0 : (int)$_POST['page'];
 		
 		if( !wp_verify_nonce( $nonce, 'bea-mm-search-'.$post_type.'-'.$blog_id ) ) {
 			wp_send_json_error();
@@ -80,7 +93,9 @@ class Bea_MM_Admin_PostType {
 					'post_type' => $post_type, 
 					'sort_column' => 'menu_order, post_title',
 					's' => $search,
-					'post_status' => 'any'
+					'post_status' => 'any',
+					'paged' => $page,
+					'posts_per_page' => 10
 				)
 			);
 		restore_current_blog();
@@ -93,6 +108,8 @@ class Bea_MM_Admin_PostType {
 		$out = array();
 		while( $query->have_posts() ) {
 			$query->the_post();
+
+			
 			$out[] = array(
 				'ID' => get_the_ID(),
 				'title' => get_the_title(),
@@ -123,6 +140,7 @@ class Bea_MM_Admin_PostType {
 	}
 	
 	public static function a_link() {
+		// Basic elements
 		$blog_id = isset( $_POST['blog_id'] ) && (int)$_POST['blog_id'] > 0 ? (int)$_POST['blog_id'] : 0 ;
 		$post_type = isset( $_POST['post_type'] ) && post_type_exists( $_POST['post_type'] ) ? $_POST['post_type'] : '' ;
 		$object_id = isset( $_POST['object_id'] ) && (int)$_POST['object_id'] > 0 ? (int)$_POST['object_id'] : 0 ;
@@ -130,30 +148,32 @@ class Bea_MM_Admin_PostType {
 		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '' ;
 		$translations_to_load = array();
 		
+		// Check nonce
 		if( !wp_verify_nonce( $nonce, 'bea-mm-link-'.$post_type.'-'.$blog_id ) ) {
 			wp_send_json_error( __( 'Security error', 'bea_mm' ) );
 		}
 		
-		// Init current factory and remove group
+		// Init current factory, load the current page object
 		$connection_factory = new Bea_MM_Connection_Factory();
-		$connection_factory->load_by_object( 'post_type', get_current_blog_id(), $id);
-		$connection_factory->ungroup();
+		$connection_factory->load_by_object( 'post_type', get_current_blog_id(), $id );
 		
-		// Convert array format for class usage
-		$translations_to_load[] = array( 'blog_id' => $blog_id, 'object_id' => $object_id );
-		
-		// Add current object/blog
-		$translations_to_load[] = array( 'blog_id' => get_current_blog_id(), 'object_id' => $id );
-		
-		// Init new factory and set group !
-		$connection_factory = new Bea_MM_Connection_Factory();
-		$connection_factory->load( 'post_type', $translations_to_load );
-		
-		// Group if more than one translations !
-		if ( count($translations_to_load) > 1 ) {
-			$connection_factory->group();
+		// If there is no connection set between this element and other load the foreign element connections
+		if( count( $connection_factory->get_all() ) <= 1 ) {
+			// Load the foreign object objects
+			$connection_factory->load_by_object( 'post_type', $blog_id, $object_id );
+			
+			// Append the current element to the connection
+			$connection_factory->append( 'post_type', array( 'blog_id' => get_current_blog_id(), 'object_id' => $id ) );
+		} else {
+			// Add the needed element to the connection
+			$connection_factory->append( 'post_type', array( 'blog_id' => $blog_id, 'object_id' => $object_id ) );
 		}
 		
+		// Group and save
+		$connection_factory->group();
+		
+		// Send response with data for javascript
+		switch_to_blog( $blog_id );
 		wp_send_json_success( array( 'title' => get_the_title( $object_id ), 'edit_link' => get_edit_post_link( $object_id ) ) );
 	}
 
@@ -163,33 +183,19 @@ class Bea_MM_Admin_PostType {
 		$object_id = isset( $_POST['object_id'] ) && (int)$_POST['object_id'] > 0 ? (int)$_POST['object_id'] : 0 ;
 		$id = isset( $_POST['id'] ) && (int)$_POST['id'] > 0 ? (int)$_POST['id'] : 0 ;
 		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '' ;
-		$translations_to_load = array();
 		
+		// Check the nonce
 		if( !wp_verify_nonce( $nonce, 'bea-mm-unlink-'.$post_type.'-'.$blog_id ) ) {
 			wp_send_json_error( __( 'Security error', 'bea_mm' ) );
 		}
 		
-		// Init current factory and remove group
+		// Init current factory and remove the blog id from group loaded
 		$connection_factory = new Bea_MM_Connection_Factory();
 		$connection_factory->load_by_object( 'post_type', get_current_blog_id(), $id);
-		$connection_factory->ungroup();
+		$connection_factory->ungroup_blog( $blog_id );
 		
-		// Convert array format for class usage
-		$translations_to_load[] = array( 'blog_id' => $blog_id, 'object_id' => 0 );
-		
-		// Add current object/blog
-		$translations_to_load[] = array( 'blog_id' => get_current_blog_id(), 'object_id' => $id );
-		
-		// Init new factory and set group !
-		$connection_factory = new Bea_MM_Connection_Factory();
-		$connection_factory->load( 'post_type', $translations_to_load );
-		
-		// Group if more than one translations !
-		if ( count($translations_to_load) > 1 ) {
-			$connection_factory->group();
-		}
-		
-		wp_send_json_success();
+		// Send response
+		wp_send_json_success( );
 	}
 
 	/**
@@ -231,12 +237,8 @@ class Bea_MM_Admin_PostType {
 		if ( count($translations_to_load) > 1 ) {
 			$connection_factory->group();
 		}
-	}
-
-	public static function add_ressources() {
-		wp_enqueue_script( 'bea-mm-admin-scripts' );
-		wp_enqueue_script( 'bea-mm-admin-link' );
-		wp_enqueue_style( 'bea-mm-admin' );
+		
+		
 	}
 	
 	/**
@@ -274,14 +276,7 @@ class Bea_MM_Admin_PostType {
 		// Add current object/blog
 		$translations_to_load[] = array( 'blog_id' => get_current_blog_id(), 'object_id' => $object->ID, 'title' => $object->post_title );
 		
-		// Init new factory and set group !
-		$connection_factory = new Bea_MM_Connection_Factory();
-		$connection_factory->load( 'post_type', $translations_to_load );
-		
-		// Group if more than one translations !
-		if ( count($translations_to_load) > 1 ) {
-			$connection_factory->group();
-		}
+		self::loadTranslations( $translations_to_load );
 		
 		return $translations_to_load;
 	}
