@@ -22,6 +22,11 @@ var bea_mm_link;
 				// Nonce
 				inputs.nonce = el.data( 'nonce' );
 				inputs.nonce_link = el.data( 'nonce-link' );
+				
+				// Reinit rivers fields
+				rivers.recent.element.show();
+				rivers.search.element.hide();
+				
 				bea_mm_link.open( );
 			} );
 
@@ -42,6 +47,7 @@ var bea_mm_link;
 				e.preventDefault( );
 				bea_mm_link.update( );
 			} );
+			
 			$( '#bea-mm-link-cancel' ).click( function( e ) {
 				e.preventDefault( );
 				bea_mm_link.close( );
@@ -52,6 +58,7 @@ var bea_mm_link;
 			inputs.search.keyup( bea_mm_link.searchInternalLinks );
 
 			inputs.dialog.bind( 'wpdialogrefresh', bea_mm_link.refresh );
+			inputs.dialog.bind( 'wpdialogclose', bea_mm_link.close );
 		},
 
 		open : function( ) {
@@ -72,8 +79,8 @@ var bea_mm_link;
 
 		refresh : function( ) {
 			// Refresh rivers (clear links, check visibility)
-			rivers.search.refresh( );
 			rivers.recent.refresh( );
+			rivers.search.refresh( );
 
 			bea_mm_link.setDefaultValues( );
 
@@ -241,6 +248,7 @@ var bea_mm_link;
 		refresh : function( ) {
 			this.deselect( );
 			this.visible = this.element.is( ':visible' );
+			this.query.page = 1;
 			this.ul.empty();
 		},
 		show : function( ) {
@@ -260,24 +268,24 @@ var bea_mm_link;
 
 			if( li.hasClass( 'unselectable' ) || li == this.selected ) {
 				event.preventDefault( );
+			} else {
+				this.deselect( );
+				this.selected = li.addClass( 'selected' );
+				// Make sure the element is visible
+				liHeight = li.outerHeight( );
+				elHeight = this.element.height( );
+				liTop = li.position( ).top;
+				elTop = this.element.scrollTop( );
+	
+				if( liTop < 0 ) {// Make first visible element
+					this.element.scrollTop( elTop + liTop );
+				} else if( liTop + liHeight > elHeight ) {// Make last visible element
+					this.element.scrollTop( elTop + liTop - elHeight + liHeight );
+				}
+	
+				// Trigger the river-bea-mm-select event
+				this.element.trigger( 'river-select', [li, event, this] );
 			}
-
-			this.deselect( );
-			this.selected = li.addClass( 'selected' );
-			// Make sure the element is visible
-			liHeight = li.outerHeight( );
-			elHeight = this.element.height( );
-			liTop = li.position( ).top;
-			elTop = this.element.scrollTop( );
-
-			if( liTop < 0 ) {// Make first visible element
-				this.element.scrollTop( elTop + liTop );
-			} else if( liTop + liHeight > elHeight ) {// Make last visible element
-				this.element.scrollTop( elTop + liTop - elHeight + liHeight );
-			}
-
-			// Trigger the river-bea-mm-select event
-			this.element.trigger( 'river-select', [li, event, this] );
 		},
 		deselect : function( ) {
 			if( this.selected ) {
@@ -307,7 +315,9 @@ var bea_mm_link;
 			}
 		},
 		ajax : function( callback ) {
-			var self = this, delay = this.query.page == 1 ? 0 : bea_mm_link.minRiverAJAXDuration, response = bea_mm_link.delayedCallback( function( results, params ) {
+			var self = this, 
+			delay = this.query.page == 1 ? 0 : bea_mm_link.minRiverAJAXDuration, 
+			response = bea_mm_link.delayedCallback( function( results, params ) {
 				self.process( results, params );
 				if( callback ) {
 					callback( results, params );
@@ -329,13 +339,14 @@ var bea_mm_link;
 
 			if( !results.success ) {
 				if( firstPage ) {
-					list += _.template( document.getElementById( 'bea-mm-search-line-empty' ).text )
+					list += _.template( document.getElementById( 'bea-mm-search-line-empty' ).text, {} )
 				}
 			} else {
 				list = _.template( document.getElementById( 'bea-mm-search-line' ).text, {
 					'results' : results.data
 				} );
 			}
+			console.log(list);
 
 			this.ul[ firstPage ? 'html' : 'append' ]( list );
 		},
