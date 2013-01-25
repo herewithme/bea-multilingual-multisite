@@ -346,7 +346,6 @@ var bea_mm_link;
 					'results' : results.data
 				} );
 			}
-			console.log(list);
 
 			this.ul[ firstPage ? 'html' : 'append' ]( list );
 		},
