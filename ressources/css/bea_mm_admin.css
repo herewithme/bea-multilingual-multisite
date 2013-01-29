@@ -290,3 +290,7 @@ RTL
 .rtl #bea-mm-link .toggle-arrow-active {
 	background-position: center right;
 }
+
+#bea-mm .spinner {
+	float:left;
+}

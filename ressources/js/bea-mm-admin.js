@@ -98,7 +98,7 @@ fr.bea.mm = {
 		} );
 	},
 	addRelation : function( translation ) {
-		var bu = jQuery( '#bea-mm-translation-' + translation.blog_id ), input = bu.find( 'input' );
+		var bu = jQuery( '#bea-mm-translation-' + translation.blog_id ), input = bu.find( 'input' ), spinner = bu.find('.spinner');
 		translation.object_id = translation.id;
 		translation.id = fr.bea.mm.post_id;
 		translation.action = 'bea_mm_link';
@@ -115,8 +115,10 @@ fr.bea.mm = {
 			data : translation,
 			beforeSend : function( ) {
 				fr.bea.mm.setMessage( 'alert', bea_mm_vars.linkWaiting );
+				spinner.show();
 			},
 			success : function( resp ) {
+				spinner.hide();
 				fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? bea_mm_vars.linkSuccess : bea_mm_vars.linkFailed );
 				fr.bea.mm.makeEditLine( translation.blog_id, resp.data );
 				input.val( translation.object_id );
@@ -124,7 +126,7 @@ fr.bea.mm = {
 		} );
 	},
 	removeRelation : function( translation ) {
-		var bu = jQuery( '#bea-mm-translation-' + translation.blog_id );
+		var bu = jQuery( '#bea-mm-translation-' + translation.blog_id ), spinner = bu.find('.spinner');
 		translation.action = 'bea_mm_unlink';
 
 		jQuery.ajax( {
@@ -134,8 +136,10 @@ fr.bea.mm = {
 			data : translation,
 			beforeSend : function( ) {
 				fr.bea.mm.setMessage( 'alert', bea_mm_vars.unlinkWaiting );
+				spinner.show();
 			},
 			success : function( resp ) {
+				spinner.hide();
 				fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? bea_mm_vars.unlinkSuccess : bea_mm_vars.unlinkFailed );
 				fr.bea.mm.makeDefaultLine( translation.blog_id, translation );
 				bu.find( 'input' ).val( 0 );
