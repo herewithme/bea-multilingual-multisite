@@ -39,7 +39,7 @@
 					<?php
 						restore_current_blog();
 					 else: ?>
-						<?php echo $translation_factory -> get_language_label( true ); ?> - <span class="controls" ><a title="Insérer/modifier une relation" href="#" class="button add_relation"><?php esc_html_e( 'Add relation', 'bea-mm' ) ?></span></a>
+						<?php echo $translation_factory -> get_language_label( true ); ?> - <span class="controls" ><a title="Insérer/modifier une relation" href="#" class="button add_relation"><?php esc_html_e( 'Add relation', 'bea-mm' ) ?></a></span>
 					<?php endif; ?>
 				<input type="hidden" value="<?php echo esc_attr( $current_id ); ?>" name="translations[<?php echo esc_attr( $translation_factory -> get_blog_id() ); ?>]" />
 			</li>
