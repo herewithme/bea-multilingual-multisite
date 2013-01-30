@@ -52,6 +52,17 @@ class Bea_MM_Translation_View_PostType implements Bea_MM_Translation_View {
 
 		return $return_value;
 	}
+	
+	public function get_post_status( ) {
+		if ( $this->connection == NULL )
+			return NULL;
+		
+		switch_to_blog( $this->obj->blog_id );
+		$return_value = get_post_status( $this->get_id( ) );
+		restore_current_blog( );
+
+		return $return_value;
+	}
 
 	public function get_title( ) {
 		if ( $this->connection == NULL )
