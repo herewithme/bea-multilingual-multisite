@@ -29,6 +29,7 @@
 							'bea-mm-unlink-'.$object->post_type.'-'.$translation_factory -> get_blog_id(),
 							'bea-mm-unlink-'.$object->post_type.'-'.$translation_factory -> get_blog_id() 
 						),
+						'data-translated' => $current_id > 0 ? 'true' : 'false'
 					)
 				);
 			?>
@@ -71,7 +72,7 @@
 				$translation_factory -> the_translation();
 				
 				// Skip current translation
-				if ( $translation_factory->is_current_translation() ||  $translation_factory->translation_exists() ) {
+				if ( $translation_factory->is_current_translation() ) {
 					continue;
 				}
 			?>

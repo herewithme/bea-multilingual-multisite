@@ -38,6 +38,8 @@ fr.bea.mm = {
 		self.template_edit = document.getElementById( 'bea-mm-tpl-edit' ).text;
 		self.bea_mm = jQuery( "#bea-mm" );
 		self.messages = jQuery( document.getElementById( 'bea_mm_messages' ) );
+		self.translations = self.bea_mm.find( '.list-relations li' );
+		self.draftsGenerator = document.getElementById( 'bea_mm_create_drafts' );
 
 		// All draft generator
 		self.initDraftGenerator( '#bea_mm_create_all_drafts' );
@@ -50,9 +52,42 @@ fr.bea.mm = {
 		
 		// Unlink
 		self.initUnlink( '.del-item' );
-	},
-	initUnlink : function() {
+	}, initNeedTranslations : function() {
+		var self = this;
+		self.need_translation = [];
 		
+		// Make an array with all the blog_ids to translate
+		_.each( self.translations, function( el, i ) {
+			if( el.getAttribute( 'data-translated' ) === 'false' ) {
+				self.need_translation.push( el.getAttribute( 'data-blog_id' ) );
+			} else {
+				self.showDraftCheckBox( el.getAttribute( 'data-blog_id' ) );
+			}
+		});
+		
+		// Do not show the draft generator if no transalations
+		if( self.need_translation.length === 0 ) {
+			jQuery( '.tools-relations' ).hide();
+		} else {
+			jQuery( '.tools-relations' ).show();
+		}
+		
+		// Hide/show the checkboxes lines
+		self.hideDraftCheckBox();
+		
+		return self.need_translation;
+	},
+	hideDraftCheckBox : function() {
+		var self = this;
+		_.each( self.need_translation, function( el ) {
+			jQuery( '#bea-mm-draft-'+el ).removeProp( 'checked' ).closest( 'li' ).show();
+		});
+	},
+	showDraftCheckBox : function( id ) {
+		if( _.isNaN( parseInt( id, 10 ) ) ) {
+			return false;
+		}
+		jQuery( '#bea-mm-draft-'+id ).removeProp( 'checked' ).closest( 'li' ).hide();
 	},
 	initDraftGenerator : function( sl ) {
 		var el = jQuery( sl ), self = this;
@@ -216,7 +251,9 @@ fr.bea.mm = {
 		}
 
 		var but = jQuery( '#bea-mm-translation-' + blog_id );
+		but.attr( 'data-translated', 'true' );
 		but.find( '.controls' ).html( _.template( fr.bea.mm.template_edit, data ) );
+		this.initNeedTranslations();
 		return true;
 	},
 	makeDefaultLine : function( blog_id, data ) {
@@ -225,7 +262,9 @@ fr.bea.mm = {
 		}
 
 		var but = jQuery( '#bea-mm-translation-' + blog_id );
+		but.attr( 'data-translated', 'false' );
 		but.find( '.controls' ).html( _.template( fr.bea.mm.template_add, data ) );
+		this.initNeedTranslations();
 		return true;
 	},
 	setMessage : function( status, message ) {
