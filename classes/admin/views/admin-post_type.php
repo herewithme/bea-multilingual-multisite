@@ -37,7 +37,7 @@
 					<div class="spinner" ></div>
 					<?php if( $current_id !== 0 ):
 						switch_to_blog( $translation_factory -> get_blog_id() ); ?>
-						<?php echo $translation_factory -> get_language_label( true ); ?> - <span class="controls"><a href="<?php echo get_edit_post_link( $current_id ); ?>"><?php echo get_the_title( $current_id ) ?></a> - <a href="#" class="edit-relation"><?php esc_html_e( 'Edit', 'bea-mm' ) ?></a> / <a href="#" class="del-item"><?php esc_html_e( 'Delete the relation', 'bea-mm' ) ?></span></a>
+						<?php echo $translation_factory -> get_language_label( true ); ?> - <span class="controls"><a href="<?php echo get_edit_post_link( $current_id ); ?>"><?php echo get_the_title( $current_id ) ?></a> - <a href="#" class="edit-relation"><?php esc_html_e( 'Edit relation', 'bea-mm' ) ?></a> / <a href="#" class="del-item"><?php esc_html_e( 'Delete relation', 'bea-mm' ) ?></span></a>
 					<?php
 						restore_current_blog();
 					 else: ?>
@@ -143,7 +143,7 @@
 	<a href="#" class="button add_relation"><?php esc_html_e( 'Add relation', 'bea-mm' ) ?></a>
 </script>
 <script id="bea-mm-tpl-edit" type="text/html" >
-	<a href="<%= edit_link %>"><%= title %></a> - <a href="#" class="edit-relation"><?php esc_html_e( 'Edit', 'bea-mm' ) ?></a> / <a href="#" class="del-item"><?php esc_html_e( 'Delete the relation', 'bea-mm' ) ?></a>
+	<a href="<%= edit_link %>"><%= title %></a> - <a href="#" class="edit-relation"><?php esc_html_e( 'Edit relation', 'bea-mm' ) ?></a> / <a href="#" class="del-item"><?php esc_html_e( 'Delete relation', 'bea-mm' ) ?></a>
 </script>
 
 <script id="bea-mm-search-line" type="text/html" >
