@@ -195,7 +195,7 @@ class Bea_MM_Admin_PostType {
 		$connection_factory->load_by_object( 'post_type', get_current_blog_id(), $id );
 		
 		// If there is no connection set between this element and other load the foreign element connections
-		if( count( $connection_factory->get_all() ) <= 1 ) {
+		if( count( $connection_factory->get_all() ) < 1 ) {
 			// Load the foreign object objects
 			$connection_factory->load_by_object( 'post_type', $blog_id, $object_id );
 			
