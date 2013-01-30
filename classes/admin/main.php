@@ -57,7 +57,8 @@ class Bea_MM_Admin {
 			'selectSomething' =>  __( 'Please select an object on the list', 'bea-mm' ),
 			'allDraftWaiting' =>  __( 'Draft are on their way... Please wait', 'bea-mm' ),
 			'linkWaiting' =>  __( 'Relation creation... Please wait', 'bea-mm' ),
-			'unlinkWaiting' =>  __( 'Relation deletion... Please wait', 'bea-mm' ),
+			'unlinkWaiting' => __( 'Relation deletion... Please wait', 'bea-mm' ),
+			'selectLanguage' => __( 'Please select at least a language', 'bea-mm' ),
 		) );
 		
 		wp_localize_script( 'bea-mm-admin-link' , 'bea_mm_linkL10n', array(

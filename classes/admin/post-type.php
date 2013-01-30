@@ -13,6 +13,7 @@ class Bea_MM_Admin_PostType {
 		// Ajax actions
 		add_action( 'wp_ajax_'.'bea_mm_search', array( __CLASS__, 'a_search' ), 10);
 		add_action( 'wp_ajax_'.'bea_mm_auto_draft', array( __CLASS__, 'a_create_drafts' ), 10);
+		add_action( 'wp_ajax_'.'bea_mm_selected_drafts', array( __CLASS__, 'a_create_selected_drafts' ), 10);
 		add_action( 'wp_ajax_'.'bea_mm_link', array( __CLASS__, 'a_link' ), 10);
 		add_action( 'wp_ajax_'.'bea_mm_unlink', array( __CLASS__, 'a_unlink' ), 10);
 	}
@@ -121,7 +122,6 @@ class Bea_MM_Admin_PostType {
 	}
 
 	public static function a_create_drafts() {
-		
 		$post_type = isset( $_POST['post_type'] ) && post_type_exists( $_POST['post_type'] ) ? $_POST['post_type'] : '' ;
 		$blog_id = isset( $_POST['blog_id'] ) && (int)$_POST['blog_id'] > 0 ? (int)$_POST['blog_id'] : 0 ;
 		$object_id = isset( $_POST['id'] ) && (int)$_POST['id'] > 0 ? (int)$_POST['id'] : 0 ;
@@ -137,6 +137,43 @@ class Bea_MM_Admin_PostType {
 		}
 		
 		wp_send_json_success( self::create_object_drafts( $obj ) );
+	}
+	
+	public static function a_create_selected_drafts() {
+		$blog_ids = isset( $_POST['blog_ids'] ) ? array_map( 'absint', $_POST['blog_ids'] ) : 0 ;
+		$object_id = isset( $_POST['id'] ) && (int)$_POST['id'] > 0 ? (int)$_POST['id'] : 0 ;
+		$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '' ;
+		
+		if( !wp_verify_nonce( $nonce, 'bea-mm-selected-drafts-'.get_current_blog_id() ) ) {
+			wp_send_json_error( __( 'Security error', 'bea_mm' ) );
+		}
+		
+		$obj = get_post( $object_id );
+		if( !isset( $obj ) || !is_array( $blog_ids ) ) {
+			wp_send_json_error( __( 'Error during the post information gathering', 'bea_mm' ) );
+		}
+
+		// Init new factory and set group !
+		$connection_factory = new Bea_MM_Connection_Factory();
+		$connection_factory->load_by_object(  'post_type', get_current_blog_id(), $obj->ID );
+		
+		$create = array();
+		
+		foreach( $blog_ids as $blog_id ) {
+			$id = (int)self::create_object_draft( $obj, $blog_id );
+			if( $id <= 0 ) {
+				continue;
+			}
+			$connection_factory->append( 'post_type', array( 'blog_id' => $blog_id, 'object_id' => $id ) );
+			switch_to_blog($blog_id);
+			$create[] = array( 'blog_id' => $blog_id, 'title' => get_the_title( $id ), 'edit_link' => get_edit_post_link( $id ) ) ;
+			restore_current_blog();
+		}
+		
+		// Group
+		$connection_factory->group();
+
+		wp_send_json_success( $create );
 	}
 	
 	public static function a_link() {
@@ -240,10 +277,9 @@ class Bea_MM_Admin_PostType {
 	}
 	
 	/**
-	 * Create the draft in the desired blogs from the current given object and mark as translation
+	 * Create the draft in all blogs available from the current given object and mark as translation
 	 * 
 	 * @param $object(object): WordPress post object
-	 * @param $blog_ids(array) : blog ids for the post association
 	 * @return array with status on each blog association
 	 * @author Nicolas Juen
 	 */
@@ -295,7 +331,7 @@ class Bea_MM_Admin_PostType {
 	 * Create the draft in the desired blog from the current given object and mark as translation
 	 * 
 	 * @param $object(object): WordPress post object
-	 * @param $blog_id(int) : blog ids for the post association
+	 * @param $blog_id(int) : blog id for the post association
 	 * @return true|false on success/failure
 	 * @author Nicolas Juen
 	 */

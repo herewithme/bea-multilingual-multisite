@@ -64,27 +64,32 @@
 		?>
 		<button class="button button-primary add-draft" <?php echo $attrs; ?> type="button" ><?php esc_html_e( 'Create draft in all available languages', 'bea-mm' ) ?></button>
 	</div>
-	<div class="add-draft">
+	<div class="add-draft" id="bea_mm_create_drafts">
 		<ul>
-			<?php while ( $translation_factory -> have_translations() ) :
+			<?php
+			while ( $translation_factory -> have_translations() ) :
 				$translation_factory -> the_translation();
 				
 				// Skip current translation
-				if ( $translation_factory->is_current_translation() ) {
+				if ( $translation_factory->is_current_translation() ||  $translation_factory->translation_exists() ) {
 					continue;
 				}
-
-				// Get translated id
-				$current_id = $translation_factory->translation_exists() ? $translation_factory -> get_translation_id() : 0 ;
 			?>
 			<li>
 				<label for='<?php echo esc_attr( 'bea-mm-draft-'.$translation_factory ->get_blog_id() ); ?>'> <?php echo esc_attr( $translation_factory ->get_language_label( true ) ); ?> </label>
 				<input id="<?php echo esc_attr( 'bea-mm-draft-'.$translation_factory ->get_blog_id() ); ?>" type="checkbox" value="<?php echo esc_attr( $translation_factory ->get_blog_id() ); ?>">
-				
 			</li>
 			<?php endwhile; ?>
 		</ul>
-		<input class="button button-primary add-draft" type="button" value="<?php esc_attr_e( 'Create draft in selected languages', 'bea-mm' ) ?>">
+		<?php
+		$attrs = Bea_MM_Plugin::make_html_attrs( 
+			array(
+				'data-nonce' => wp_create_nonce( 'bea-mm-selected-drafts-'.get_current_blog_id(), 'bea-mm-selected-drafts' ),
+				'data-post_type' => $object->post_type
+			)
+		);
+		?>
+		<input class="button button-primary add-draft" <?php echo $attrs; ?> type="button" value="<?php esc_attr_e( 'Create draft in selected languages', 'bea-mm' ) ?>">
 	</div>
 </div>
 <?php endif; ?>

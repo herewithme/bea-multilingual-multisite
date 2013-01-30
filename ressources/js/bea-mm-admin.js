@@ -23,6 +23,7 @@ fr.bea.mm = {
 	post_id : 0,
 	template_add : '',
 	template_edit : '',
+	need_translation : [],
 	init : function( ) {
 		var self = this;
 
@@ -40,8 +41,18 @@ fr.bea.mm = {
 
 		// All draft generator
 		self.initDraftGenerator( '#bea_mm_create_all_drafts' );
+		
+		// Selectable draft generators
+		self.initSelectableDraftGenerator( '#bea_mm_create_drafts' );
+		
+		// Init tha var with translations empty
+		self.initNeedTranslations();
+		
 		// Unlink
 		self.initUnlink( '.del-item' );
+	},
+	initUnlink : function() {
+		
 	},
 	initDraftGenerator : function( sl ) {
 		var el = jQuery( sl ), self = this;
@@ -70,10 +81,63 @@ fr.bea.mm = {
 					},
 					success : function( resp ) {
 						el.removeClass( 'ajaxing' );
+						// Add success//error message
 						fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? _.template( bea_mm_vars.draftSuccess, {
 							number : resp.data.length
 						} ) : bea_mm_vars.draftFailed );
+						
+						// Display all the needed drafts
+						if( resp.success === true ) {
+							_.each( resp.data, function( value ) {
+								fr.bea.mm.makeEditLine( value.blog_id, value );
+							} );
+						}
+					}
+				} );
+			}
+		} );
+	},
+	initSelectableDraftGenerator : function( sl ) {
+		var el = jQuery( sl ), self = this;
 
+		// Handle the generator draft
+		el.on( 'click', '.add-draft', function( e ) {
+			e.preventDefault( );
+
+			if( !el.hasClass( 'ajaxing' ) ) {
+				var bu = jQuery( this ), 
+				nonce = bu.data( 'nonce' ), 
+				blog_ids = el.find( 'input:checked' ).map(function() {return this.value;}).get();
+				
+				if( blog_ids.length <= 0 ) {
+					fr.bea.mm.setMessage( 'failure', bea_mm_vars.selectLanguage );
+					return false;
+				}
+				
+				// Generate the selected drafts
+				jQuery.ajax( {
+					type : 'POST',
+					url : ajaxurl,
+					dataType : 'json',
+					data : {
+						action : 'bea_mm_selected_drafts',
+						nonce : nonce,
+						blog_ids : blog_ids,
+						id : fr.bea.mm.post_id
+					},
+					beforeSend : function( ) {
+						el.addClass( 'ajaxing' );
+						fr.bea.mm.setMessage( 'alert', bea_mm_vars.allDraftWaiting );
+					},
+					success : function( resp ) {
+						el.removeClass( 'ajaxing' );
+						
+						// add the message
+						fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? _.template( bea_mm_vars.draftSuccess, {
+							number : resp.data.length
+						} ) : bea_mm_vars.draftFailed );
+						
+						// Add the templates for the selected drafts
 						if( resp.success === true ) {
 							_.each( resp.data, function( value ) {
 								fr.bea.mm.makeEditLine( value.blog_id, value );
