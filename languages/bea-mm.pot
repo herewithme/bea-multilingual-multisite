@@ -1,0 +1,416 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Bea multilingual multisite\n"
+"POT-Creation-Date: 2013-02-01 16:25+0100\n"
+"PO-Revision-Date: 2013-02-01 16:25+0100\n"
+"Last-Translator: Nicolas <njuen@beapi.fr>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e;esc_attr_e;esc_attr__;"
+"_esc_html__;esc_html_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../classes/plugin.php:12
+msgid ""
+"This plugin needs the activation of the multisite-feature for working "
+"properly. Please read <a href='http://codex.wordpress.org/"
+"Create_A_Network'>this post</a> if you don't know the meaning."
+msgstr ""
+
+#: ../classes/widget.php:9
+msgid "Language switcher"
+msgstr ""
+
+#: ../classes/widget.php:9
+msgid "Display avalaible translation for current view."
+msgstr ""
+
+#: ../classes/widget.php:24 ../classes/widget.php:62
+msgid "Widget Name"
+msgstr ""
+
+#: ../classes/admin/main.php:39 ../classes/admin/post-type.php:41
+#: ../classes/admin/views/site-translation-info.php:3
+msgid "Translations"
+msgstr ""
+
+#: ../classes/admin/main.php:51
+msgid "<%= number %> draft created"
+msgstr ""
+
+#: ../classes/admin/main.php:52
+msgid "No draft created"
+msgstr ""
+
+#: ../classes/admin/main.php:53
+msgid "Relation not created"
+msgstr ""
+
+#: ../classes/admin/main.php:54
+msgid "Relation created"
+msgstr ""
+
+#: ../classes/admin/main.php:55
+msgid "Relation removed"
+msgstr ""
+
+#: ../classes/admin/main.php:56
+msgid "Error during the relation removal"
+msgstr ""
+
+#: ../classes/admin/main.php:57
+msgid "Please select an object on the list"
+msgstr ""
+
+#: ../classes/admin/main.php:58
+msgid "Draft are on their way... Please wait"
+msgstr ""
+
+#: ../classes/admin/main.php:59
+msgid "Relation creation... Please wait"
+msgstr ""
+
+#: ../classes/admin/main.php:60
+msgid "Relation deletion... Please wait"
+msgstr ""
+
+#: ../classes/admin/main.php:61
+msgid "Please select at least a language"
+msgstr ""
+
+#: ../classes/admin/main.php:65
+msgid "Add/update relations"
+msgstr ""
+
+#: ../classes/admin/main.php:66
+msgid "Update relations"
+msgstr ""
+
+#: ../classes/admin/main.php:67
+#: ../classes/admin/views/site-translation-db-edit.php:57
+#: ../classes/admin/views/site-translation-db-new.php:57
+msgid "Save"
+msgstr ""
+
+#: ../classes/admin/main.php:68
+msgid "No matches found for this query"
+msgstr ""
+
+#: ../classes/admin/main.php:69
+msgid "No title"
+msgstr ""
+
+#: ../classes/admin/main.php:150 ../classes/admin/network.php:92
+msgid "All fields are required."
+msgstr ""
+
+#: ../classes/admin/main.php:159
+msgid "This group not exists."
+msgstr ""
+
+#: ../classes/admin/main.php:166
+msgid "No group on DB."
+msgstr ""
+
+#: ../classes/admin/main.php:182
+msgid "Translation group saved."
+msgstr ""
+
+#: ../classes/admin/network.php:28
+#: ../classes/admin/views/network-group-info.php:3
+msgid "Translations Groups"
+msgstr ""
+
+#: ../classes/admin/network.php:101
+msgid "A translation group already exists with this name."
+msgstr ""
+
+#: ../classes/admin/network.php:121
+msgid "Translation group added."
+msgstr ""
+
+#: ../classes/admin/network.php:145
+msgid "Tcheater"
+msgstr ""
+
+#: ../classes/admin/network.php:150
+msgid "All label fields are required."
+msgstr ""
+
+#: ../classes/admin/network.php:167
+msgid "Translation group updated."
+msgstr ""
+
+#: ../classes/admin/post-type.php:131 ../classes/admin/post-type.php:148
+#: ../classes/admin/post-type.php:190 ../classes/admin/post-type.php:226
+msgid "Security error"
+msgstr ""
+
+#: ../classes/admin/post-type.php:136 ../classes/admin/post-type.php:153
+msgid "Error during the post information gathering"
+msgstr ""
+
+#: ../classes/admin/views/admin-post_type.php:40
+#: ../classes/admin/views/admin-post_type.php:146
+msgid "Edit relation"
+msgstr ""
+
+#: ../classes/admin/views/admin-post_type.php:40
+#: ../classes/admin/views/admin-post_type.php:146
+msgid "Delete relation"
+msgstr ""
+
+#: ../classes/admin/views/admin-post_type.php:44
+#: ../classes/admin/views/admin-post_type.php:135
+#: ../classes/admin/views/admin-post_type.php:143
+msgid "Add relation"
+msgstr ""
+
+#: ../classes/admin/views/admin-post_type.php:51
+msgid "No site to translate."
+msgstr ""
+
+#: ../classes/admin/views/admin-post_type.php:66
+msgid "Create draft in all available languages"
+msgstr ""
+
+#: ../classes/admin/views/admin-post_type.php:93
+msgid "Create draft in selected languages"
+msgstr ""
+
+#: ../classes/admin/views/admin-post_type.php:113
+msgid "Search"
+msgstr ""
+
+#: ../classes/admin/views/admin-post_type.php:125
+msgid "No search term specified. Showing recent items."
+msgstr ""
+
+#: ../classes/admin/views/admin-post_type.php:138
+msgid "Cancel"
+msgstr ""
+
+#: ../classes/admin/views/network-group-form.php:2
+msgid "Add a translation group"
+msgstr ""
+
+#: ../classes/admin/views/network-group-form.php:8
+#: ../classes/admin/views/network-group-list-api.php:11
+#: ../classes/admin/views/network-group-list-api.php:18
+#: ../classes/admin/views/network-group-list-db.php:11
+#: ../classes/admin/views/network-group-list-db.php:19
+msgid "Name"
+msgstr ""
+
+#: ../classes/admin/views/network-group-form.php:13
+msgid ""
+"This name is used on DB. (All characters in lowercase and no weird) "
+"<strong>This value can not be changed</strong>"
+msgstr ""
+
+#: ../classes/admin/views/network-group-form.php:18
+#: ../classes/admin/views/network-group-list-api.php:12
+#: ../classes/admin/views/network-group-list-api.php:19
+#: ../classes/admin/views/network-group-list-db.php:12
+#: ../classes/admin/views/network-group-list-db.php:20
+msgid "Label"
+msgstr ""
+
+#: ../classes/admin/views/network-group-form.php:22
+msgid "This parameter is used for display translation group on backoffice."
+msgstr ""
+
+#: ../classes/admin/views/network-group-form.php:29
+msgid "Add group"
+msgstr ""
+
+#: ../classes/admin/views/network-group-info.php:4
+msgid "Add"
+msgstr ""
+
+#: ../classes/admin/views/network-group-info.php:6
+msgid ""
+"Translation groups allow you to link sites together for the translation "
+"feature"
+msgstr ""
+
+#: ../classes/admin/views/network-group-info.php:7
+msgid ""
+"For example, we can consider that the site of a Swiss bank must be available "
+"in 4 languages: English, French, German and Italian. We can create a group "
+"\"Switzerland\", and add the 4 sites corresponding to 4 languages."
+msgstr ""
+
+#: ../classes/admin/views/network-group-list-api.php:4
+msgid "Registered translation groups by plugin API"
+msgstr ""
+
+#: ../classes/admin/views/network-group-list-api.php:7
+msgid ""
+"Groups registered by the API are not editable. You need to change your "
+"source code to apply any changes."
+msgstr ""
+
+#: ../classes/admin/views/network-group-list-api.php:13
+#: ../classes/admin/views/network-group-list-api.php:20
+#: ../classes/admin/views/network-group-list-db.php:13
+#: ../classes/admin/views/network-group-list-db.php:21
+msgid "Websites"
+msgstr ""
+
+#: ../classes/admin/views/network-group-list-db.php:2
+msgid "Registred translation groups by network settings"
+msgstr ""
+
+#: ../classes/admin/views/network-group-list-db.php:6
+msgid ""
+"These groups were added by this page, you can edit and delete them. To "
+"delete or edit a site connected to a group, you must go to the network edit "
+"page."
+msgstr ""
+
+#: ../classes/admin/views/network-group-list-db.php:10
+#: ../classes/admin/views/network-group-list-db.php:18
+msgid "Delete?"
+msgstr ""
+
+#: ../classes/admin/views/network-group-list-db.php:44
+#, php-format
+msgid ""
+"Add a site to this group by editing site into the <a href=\"%s\">sites "
+"management page</a>."
+msgstr ""
+
+#: ../classes/admin/views/network-group-list-db.php:54
+msgid "Save groups"
+msgstr ""
+
+#: ../classes/admin/views/network-group-list-db.php:58
+msgid "You do not have a translation groups."
+msgstr ""
+
+#: ../classes/admin/views/network-group-list-db.php:59
+msgid ""
+"To start, connect the two sites contents of your network, you must create a "
+"translation group. Groups generally translations correspond to the name of a "
+"country. This country will usually several translations. Once the group is "
+"created, you can add an site."
+msgstr ""
+
+#: ../classes/admin/views/site-translation-api.php:2
+#: ../classes/admin/views/site-translation-db-edit.php:2
+msgid "Translation"
+msgstr ""
+
+#: ../classes/admin/views/site-translation-api.php:4
+#: ../classes/admin/views/site-translation-db-edit.php:4
+#, php-format
+msgid ""
+"This site belongs to the translation group <strong>\"%s\"</strong>, you "
+"can't edit this settings because this group is declared through the use of "
+"the code API into a plugin or functions.php file of your theme."
+msgstr ""
+
+#: ../classes/admin/views/site-translation-api.php:10
+msgid "Language code"
+msgstr ""
+
+#: ../classes/admin/views/site-translation-api.php:14
+#: ../classes/admin/views/site-translation-db-edit.php:32
+#: ../classes/admin/views/site-translation-db-new.php:32
+msgid "Public label"
+msgstr ""
+
+#: ../classes/admin/views/site-translation-api.php:18
+#: ../classes/admin/views/site-translation-db-edit.php:39
+#: ../classes/admin/views/site-translation-db-new.php:39
+msgid "Admin label"
+msgstr ""
+
+#: ../classes/admin/views/site-translation-api.php:22
+#: ../classes/admin/views/site-translation-db-edit.php:46
+#: ../classes/admin/views/site-translation-db-new.php:46
+msgid "User language"
+msgstr ""
+
+#: ../classes/admin/views/site-translation-db-edit.php:11
+#: ../classes/admin/views/site-translation-db-new.php:11
+msgid "Translation group"
+msgstr ""
+
+#: ../classes/admin/views/site-translation-db-edit.php:21
+#: ../classes/admin/views/site-translation-db-new.php:21
+msgid "Code language"
+msgstr ""
+
+#: ../classes/admin/views/site-translation-db-edit.php:25
+#: ../classes/admin/views/site-translation-db-new.php:25
+msgid ""
+"This code language must be composed with ISO 639 language code (lowercase), "
+"an underscore and ISO 3166-1 alpha-2 country code (uppercase)"
+msgstr ""
+
+#: ../classes/admin/views/site-translation-db-edit.php:27
+#: ../classes/admin/views/site-translation-db-new.php:27
+msgid "Sample"
+msgstr ""
+
+#: ../classes/admin/views/site-translation-db-edit.php:27
+#: ../classes/admin/views/site-translation-db-new.php:27
+msgid ""
+"French France : fr_FR, French Canada : fr_CA, Deutch : de_DE, British "
+"english: en_GB"
+msgstr ""
+
+#: ../classes/admin/views/site-translation-db-edit.php:35
+#: ../classes/admin/views/site-translation-db-new.php:35
+msgid "This parameter is used for display language on frontoffice."
+msgstr ""
+
+#: ../classes/admin/views/site-translation-db-edit.php:42
+#: ../classes/admin/views/site-translation-db-new.php:42
+msgid "This parameter is used for display language on backoffice."
+msgstr ""
+
+#: ../classes/admin/views/site-translation-db-edit.php:49
+#: ../classes/admin/views/site-translation-db-new.php:49
+msgid ""
+"This parameter is used to redirect the country sites from browser settings."
+msgstr ""
+
+#: ../classes/admin/views/site-translation-db-new.php:2
+#: ../classes/admin/views/site-translation-nodb.php:2
+msgid "Group Translation"
+msgstr ""
+
+#: ../classes/admin/views/site-translation-db-new.php:4
+msgid ""
+"You do not currently belong to any group translation. When connecting this "
+"site to other languages​​, you must connect in a common group."
+msgstr ""
+
+#: ../classes/admin/views/site-translation-nodb.php:4
+#, php-format
+msgid ""
+"No translation group has been created on the network. You must first <a href="
+"\"%s\">create one</a> from the administration console on the network."
+msgstr ""
+
+#: ../classes/translation/impl-month.php:34
+#, php-format
+msgid "%1$s %2$d"
+msgstr ""
+
+#: ../classes/translation/impl-search.php:27
+#, php-format
+msgid "Search Results %1$s"
+msgstr ""
+
+#: ../widgets/admin.php:3
+msgid "Title:"
+msgstr ""
