@@ -142,44 +142,57 @@ fr.bea.mm = {
 			if( !el.hasClass( 'ajaxing' ) ) {
 				var bu = jQuery( this ), 
 				nonce = bu.data( 'nonce' ), 
-				blog_ids = el.find( 'input:checked' ).map(function() {return this.value;}).get();
+				blog_ids = el.find( 'input:checked' ).map(function() {return this.value;}).get(),
+				num_drafts = blog_ids.length,
+				i= 0;
 				
-				if( blog_ids.length <= 0 ) {
-					fr.bea.mm.setMessage( 'failure', bea_mm_vars.selectLanguage );
+				if( num_drafts <= 0 ) {
+					fr.bea.mm.appendMessage( 'failure', bea_mm_vars.selectLanguage );
 					return false;
 				}
 				
-				// Generate the selected drafts
-				jQuery.ajax( {
-					type : 'POST',
-					url : ajaxurl,
-					dataType : 'json',
-					data : {
-						action : 'bea_mm_selected_drafts',
-						nonce : nonce,
-						blog_ids : blog_ids,
-						id : fr.bea.mm.post_id
-					},
-					beforeSend : function( ) {
-						el.addClass( 'ajaxing' );
-						fr.bea.mm.setMessage( 'alert', bea_mm_vars.allDraftWaiting );
-					},
-					success : function( resp ) {
-						el.removeClass( 'ajaxing' );
-						
-						// add the message
-						fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? _.template( bea_mm_vars.draftSuccess, {
-							number : resp.data.length
-						} ) : bea_mm_vars.draftFailed );
-						
-						// Add the templates for the selected drafts
-						if( resp.success === true ) {
-							_.each( resp.data, function( value ) {
-								fr.bea.mm.makeEditLine( value.blog_id, value );
-							} );
-						}
-					}
-				} );
+				fr.bea.mm.createDraftForBlogs( blog_ids, nonce );
+			}
+		} );
+	},
+	createDraftForBlogs : function( blog_ids, nonce ) {
+		fr.bea.mm.appendMessage( 'alert', bea_mm_vars.allDraftWaiting );
+		fr.bea.mm.createDraftForBlog( blog_ids, nonce, 0, fr.bea.mm.createDraftForBlog );
+	},
+	createDraftForBlog : function( blog_ids, nonce, i ,callback ) {
+		var c_id = blog_ids[i];
+		i += 1;
+		
+		// Check this is ok
+		if( typeof c_id == 'undefined' ) {
+			return false;
+		}
+		
+		// Generate the selected drafts
+		jQuery.ajax( {
+			type : 'POST',
+			url : ajaxurl,
+			dataType : 'json',
+			async : true,
+			data : {
+				action : 'bea_mm_selected_drafts',
+				nonce : nonce,
+				blog_ids : [c_id],
+				id : fr.bea.mm.post_id
+			},
+			success : function( resp ) {
+				// add the message
+				fr.bea.mm.appendMessage( resp.success === true ? "success" : "failure", resp.success === true ? _.template( bea_mm_vars.draftSuccess, {
+					number : resp.data.length
+				} ) : bea_mm_vars.draftFailed );
+				
+				// Add the templates for the selected drafts
+				if( resp.success === true ) {
+					_.each( resp.data, function( value ) {
+						fr.bea.mm.makeEditLine( value.blog_id, value );
+					} );
+				}
+				callback( blog_ids, nonce, i, callback );
 			}
 		} );
 	},
@@ -203,7 +216,7 @@ fr.bea.mm = {
 		translation.action = 'bea_mm_link';
 
 		if( _.isNaN( parseInt( translation.object_id, 10 ) ) ) {
-			fr.bea.mm.setMessage( 'failure', bea_mm_vars.selectSomething );
+			fr.bea.mm.appendMessage( 'failure', bea_mm_vars.selectSomething );
 			return false;
 		}
 
@@ -218,7 +231,7 @@ fr.bea.mm = {
 			},
 			success : function( resp ) {
 				spinner.hide();
-				fr.bea.mm.setMessage( resp.success === true ? "success" : "failure", resp.success === true ? bea_mm_vars.linkSuccess : bea_mm_vars.linkFailed );
+				fr.bea.mm.appendMessage( resp.success === true ? "success" : "failure", resp.success === true ? bea_mm_vars.linkSuccess : bea_mm_vars.linkFailed );
 				fr.bea.mm.makeEditLine( translation.blog_id, resp.data );
 				input.val( translation.object_id );
 			}
@@ -269,6 +282,9 @@ fr.bea.mm = {
 	},
 	setMessage : function( status, message ) {
 		fr.bea.mm.messages.removeClass( 'hidden failure success alert' ).addClass( status ).html( message );
+	},
+	appendMessage : function( status, message ) {
+		fr.bea.mm.messages.removeClass( 'hidden failure success alert' ).addClass( status ).append( '<p>'+message+'</p>' );
 	}
 };
 
