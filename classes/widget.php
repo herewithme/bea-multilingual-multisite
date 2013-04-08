@@ -19,15 +19,17 @@ class Bea_MM_Widget extends WP_Widget {
 		extract( $args, EXTR_SKIP );
 
 		echo $before_widget;
-
+		
 		// TODO: This is where you retrieve the widget values
 		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? __( 'Widget Name', 'bea-mm' ) : $instance['title'], $instance, $this->id_base );
-
+		
+		$langs = Bea_MM_Client::get_langs();
+		
 		// Display the widget, allow take template from child or parent theme
-		if ( is_file( STYLESHEETPATH . '/widget-views/widget-name.php' ) ) {// Use custom template from child theme
-			include (STYLESHEETPATH . '/widget-views/widget-name.php');
-		} elseif ( is_file( TEMPLATEPATH . '/widget-views/widget-name.php' ) ) {// Use custom template from parent theme
-			include (TEMPLATEPATH . '/widget-views/widget-name.php');
+		if ( is_file( STYLESHEETPATH . '/widget-views/bea-widget-mm-related.php' ) ) {// Use custom template from child theme
+			include (STYLESHEETPATH . '/widget-views/bea-widget-mm-related.php');
+		} elseif ( is_file( TEMPLATEPATH . '/widget-views/bea-widget-mm-related.php' ) ) {// Use custom template from parent theme
+			include (TEMPLATEPATH . '/widget-views/bea-widget-mm-related.php');
 		} else {// Use builtin temlate
 			include (BEA_MM_DIR . '/widgets/widget.php');
 		}
