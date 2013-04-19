@@ -155,7 +155,7 @@ class Bea_MM_Admin_PostType {
 
 		// Init new factory and set group !
 		$connection_factory = new Bea_MM_Connection_Factory();
-		$connection_factory->load_by_object(  'post_type', get_current_blog_id(), $obj->ID );
+		$connection_factory->load_by_object( 'post_type', get_current_blog_id(), $obj->ID );
 		
 		$create = array();
 		
@@ -169,6 +169,9 @@ class Bea_MM_Admin_PostType {
 				$create[] = array( 'blog_id' => $blog_id, 'title' => get_the_title( $id ), 'edit_link' => get_edit_post_link( $id ) ) ;
 			restore_current_blog();
 		}
+		
+		// Append current object
+		$connection_factory->append( 'post_type', array( 'blog_id' => get_current_blog_id(), 'object_id' => $obj->ID ) );
 		
 		// Group
 		$connection_factory->group();
