@@ -1,7 +1,7 @@
 <?php
 /*
  Plugin Name: BEA Multilingual Multisite
- Version: 0.0.1
+ Version: 0.0.2
  Plugin URI: https://github.com/herewithme/bea-multilingual-multisite
  Description: A simple but powerful plugin that will help you to manage the relations of posts, pages, custom post types, categories, tags and custom taxonomies in your multilingual multisite-installation.
  Author: Amaury Balmer
@@ -30,7 +30,7 @@
  */
 
 // Plugin constants
-define('BEA_MM_VERSION', '0.0.1');
+define('BEA_MM_VERSION', '0.0.2');
 define('BEA_MM_OPTION', 'bea-multilingual-multisite');
 define('BEA_MM_FOLDER', 'bea-multilingual-multisite');
 define('BEA_MM_URL', plugins_url('', __FILE__));
