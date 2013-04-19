@@ -20,7 +20,7 @@ class Bea_MM_Admin_PostType {
 
 	public static function add_ressources( $hook ) {
 		// This blog have group ?
-		if ( Bea_MM_GroupSites_Factory::get_current_group( ) == false || $hook !== 'post.php' ) {
+		if ( Bea_MM_GroupSites_Factory::get_current_group( ) == false || ( $hook !== 'post.php' && $hook !== 'post-new.php' ) ) {
 			return false;
 		}
 		wp_enqueue_script( 'bea-mm-admin-scripts' );
@@ -37,7 +37,7 @@ class Bea_MM_Admin_PostType {
 			return false;
 		}
 
-		foreach ( get_post_types(array('show_ui' => true), 'names') as $cpt ) {
+		foreach ( get_post_types( array( 'show_ui' => true ), 'names' ) as $cpt ) {
 			add_meta_box( 'bea-mm', __( 'Translations', 'bea-mm' ), array( __CLASS__, 'metabox' ), $cpt, 'side', 'high', array('post_type' => $cpt) );
 		}
 
@@ -166,13 +166,13 @@ class Bea_MM_Admin_PostType {
 			}
 			$connection_factory->append( 'post_type', array( 'blog_id' => $blog_id, 'object_id' => $id ) );
 			switch_to_blog($blog_id);
-			$create[] = array( 'blog_id' => $blog_id, 'title' => get_the_title( $id ), 'edit_link' => get_edit_post_link( $id ) ) ;
+				$create[] = array( 'blog_id' => $blog_id, 'title' => get_the_title( $id ), 'edit_link' => get_edit_post_link( $id ) ) ;
 			restore_current_blog();
 		}
 		
 		// Group
 		$connection_factory->group();
-
+		
 		wp_send_json_success( $create );
 	}
 	
@@ -294,7 +294,7 @@ class Bea_MM_Admin_PostType {
 		
 		// Init new factory and set group !
 		$connection_factory = new Bea_MM_Connection_Factory();
-		$connection_factory->load_by_object(  'post_type', get_current_blog_id(), $object->ID );
+		$connection_factory->load_by_object( 'post_type', get_current_blog_id(), $object->ID );
 		
 		if ( $translation_factory -> have_translations() ) {
 			while ( $translation_factory -> have_translations() ) {
@@ -310,12 +310,15 @@ class Bea_MM_Admin_PostType {
 				if( (int)$client_object_id > 0 ) {
 					$connection_factory->append( 'post_type', array( 'blog_id' => $translation_factory -> get_blog_id(), 'object_id' => $client_object_id ) );
 					switch_to_blog( $translation_factory -> get_blog_id() );
-					$edit_link = get_edit_post_link( $client_object_id );
+						$edit_link = get_edit_post_link( $client_object_id );
 					restore_current_blog();
 					$translations_to_load[] = array( 'blog_id' => $translation_factory -> get_blog_id(), 'title' => get_the_title( $object->ID ), 'edit_link' => $edit_link ) ;
 				}
 			}
 		}
+		
+		// Add the current object to the set of translations
+		$connection_factory->append( 'post_type', array( 'blog_id' => get_current_blog_id(), 'object_id' => $object->ID ) );
 		
 		// Return array empty if no translations
 		if( empty( $translations_to_load ) ) {
